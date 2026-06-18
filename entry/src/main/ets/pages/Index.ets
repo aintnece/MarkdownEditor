@@ -327,10 +327,10 @@ struct Index {
     .margin({ top: 4, bottom: 4 })
   }
 
-  // ── 页面导航 ──
+// ── 页面导航 ──
 
   private async createNewFile(): Promise<void> {
-    const params: Record<string, Object> = { newFile: true };
+    const params: Record<string, string> = { newFile: 'true' };
     router.pushUrl({
       url: 'pages/EditorPage',
       params,
@@ -346,7 +346,7 @@ struct Index {
       });
 
       if (uris.length > 0) {
-        const params: Record<string, Object> = { filePath: uris[0] };
+        const params: Record<string, string> = { filePath: uris[0] };
         router.pushUrl({
           url: 'pages/EditorPage',
           params,
@@ -358,7 +358,7 @@ struct Index {
   }
 
   private createQuickNote(): void {
-    const params: Record<string, Object> = { newFile: true, quickNote: true };
+    const params: Record<string, string> = { newFile: 'true', quickNote: 'true' };
     router.pushUrl({
       url: 'pages/EditorPage',
       params,
@@ -366,7 +366,7 @@ struct Index {
   }
 
   private openRecentFile(file: RecentFileItem): void {
-    const params: Record<string, Object> = { filePath: file.path };
+    const params: Record<string, string> = { filePath: file.path };
     router.pushUrl({
       url: 'pages/EditorPage',
       params,
