@@ -329,16 +329,12 @@ struct Index {
 
 // ── 页面导航 ──
 
-interface NavParams {
-  [key: string]: string;
+class NavData {
+  filePath: string = '';
 }
 
   private async createNewFile(): Promise<void> {
-    const params: NavParams = { newFile: 'true' };
-    router.pushUrl({
-      url: 'pages/EditorPage',
-      params,
-    });
+    router.pushUrl({ url: 'pages/EditorPage' });
   }
 
   private async openFile(): Promise<void> {
@@ -350,11 +346,9 @@ interface NavParams {
       });
 
       if (uris.length > 0) {
-        const params: NavParams = { filePath: uris[0] };
-        router.pushUrl({
-          url: 'pages/EditorPage',
-          params,
-        });
+        const data: NavData = new NavData();
+        data.filePath = uris[0];
+        router.pushUrl({ url: 'pages/EditorPage', params: data });
       }
     } catch (err) {
       console.error('[Index] open file error:', JSON.stringify(err));
@@ -362,23 +356,18 @@ interface NavParams {
   }
 
   private createQuickNote(): void {
-    const params: NavParams = { newFile: 'true', quickNote: 'true' };
-    router.pushUrl({
-      url: 'pages/EditorPage',
-      params,
-    });
+    router.pushUrl({ url: 'pages/EditorPage' });
   }
 
   private openRecentFile(file: RecentFileItem): void {
-    const params: NavParams = { filePath: file.path };
-    router.pushUrl({
-      url: 'pages/EditorPage',
-      params,
-    });
+    const data: NavData = new NavData();
+    data.filePath = file.path;
+    router.pushUrl({ url: 'pages/EditorPage', params: data });
   }
 
   private async loadRecentFiles(): Promise<void> {
     try {
+      const self = this;
       const data = await PreferencesManager.getInstance().load('recentFiles');
       if (data) {
         const files: RecentFileItem[] = JSON.parse(data);
@@ -388,8 +377,8 @@ interface NavParams {
             path: f.path,
             name: f.name,
             lastOpened: f.lastOpened,
-            timeAgo: this.formatTimeAgo(f.lastOpened),
-            icon: f.icon, 
+            timeAgo: self.formatTimeAgo(f.lastOpened),
+            icon: f.icon,
           }));
       }
     } catch {

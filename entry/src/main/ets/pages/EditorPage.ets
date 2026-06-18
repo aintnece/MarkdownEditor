@@ -47,6 +47,10 @@ export class EditorViewModel {
   }
 }
 
+class NavData {
+  filePath: string = '';
+}
+
 // ── 主题对象桥接（ArkUI 需要 @ObjectLink 绑定） ──
 
 @Observed
@@ -186,10 +190,9 @@ struct EditorPage {
     ThemeService.getInstance().init();
 
     // 获取传入参数（从 Index 页面跳转）
-    const params = router.getParams() as Record<string, Object>;
-    if (params && params['filePath']) {
-      const filePath = params['filePath'] as string;
-      this.openFile(filePath);
+    const data: NavData = router.getParams() as NavData;
+    if (data && data.filePath) {
+      this.openFile(data.filePath);
     }
   }
 
