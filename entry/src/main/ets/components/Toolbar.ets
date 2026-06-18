@@ -1,3 +1,5 @@
+import { ThemeColors } from '../services/ThemeService';
+
 /**
  * Toolbar 组件
  *
@@ -15,8 +17,8 @@ export struct Toolbar {
   // ── 组件属性 ──
   @Link themeColors: ThemeColors;
 
-  private onCommand?: (command: string) => void;
-  private onExport?: () => void;
+  onCommand?: (command: string) => void;
+  onExport?: () => void;
 
   // 视图模式
   @Link viewMode: ViewMode;

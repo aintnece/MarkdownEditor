@@ -1,3 +1,5 @@
+import { ThemeColors } from '../services/ThemeService';
+
 /**
  * SidePanel 组件
  *
@@ -18,8 +20,8 @@ export struct SidePanel {
   @State private recentFiles: RecentFileItem[] = [];
   @State private expanded: boolean = true;
 
-  private onFileSelect?: (path: string) => void;
-  private onHeadingSelect?: (headingId: string) => void;
+  onFileSelect?: (path: string) => void;
+  onHeadingSelect?: (headingId: string) => void;
 
   aboutToAppear(): void {
     this.loadSampleOutline();

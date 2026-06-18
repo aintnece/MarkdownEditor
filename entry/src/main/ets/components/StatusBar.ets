@@ -1,3 +1,5 @@
+import { ThemeColors } from '../services/ThemeService';
+
 /**
  * StatusBar 组件
  *

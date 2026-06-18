@@ -8,12 +8,20 @@
  *   - 快速入门指南
  */
 
-import { router } from '@kit.AbilityKit';
+import { router } from '@kit.ArkUI';
 import { picker } from '@kit.CoreFileKit';
 import { fileIo } from '@kit.CoreFileKit';
 
 import { ThemeService, BUILTIN_THEMES, ThemeColors } from '../services/ThemeService';
 import { PreferencesManager } from '../utils/PreferencesManager';
+
+interface RecentFileItem {
+  path: string;
+  name: string;
+  lastOpened: number;
+  timeAgo: string;
+  icon?: string;
+}
 
 @Observed
 class HomeThemeBridge {
@@ -324,7 +332,7 @@ struct Index {
   private async createNewFile(): Promise<void> {
     router.pushUrl({
       url: 'pages/EditorPage',
-      params: { newFile: true },
+      params: { newFile: true } as Record<string, Object>,
     });
   }
 
@@ -332,15 +340,14 @@ struct Index {
     try {
       const context = getContext(this);
       const documentPicker = new picker.DocumentViewPicker(context);
-      const uris = await documentPicker.select({
-        maxSelectCount: 1,
+      const uris: string[] = await documentPicker.select({
         fileSuffixFilters: ['.md', '.markdown', '.mdown', '.txt'],
       });
 
       if (uris.length > 0) {
         router.pushUrl({
           url: 'pages/EditorPage',
-          params: { filePath: uris[0] },
+          params: { filePath: uris[0] } as Record<string, Object>,
         });
       }
     } catch (err) {
@@ -351,14 +358,14 @@ struct Index {
   private createQuickNote(): void {
     router.pushUrl({
       url: 'pages/EditorPage',
-      params: { newFile: true, quickNote: true },
+      params: { newFile: true, quickNote: true } as Record<string, Object>,
     });
   }
 
   private openRecentFile(file: RecentFileItem): void {
     router.pushUrl({
       url: 'pages/EditorPage',
-      params: { filePath: file.path },
+      params: { filePath: file.path } as Record<string, Object>,
     });
   }
 
@@ -370,8 +377,11 @@ struct Index {
         this.recentFiles = files.slice(0, 10)
           .sort((a, b) => b.lastOpened - a.lastOpened)
           .map(f => ({
-            ...f,
+            path: f.path,
+            name: f.name,
+            lastOpened: f.lastOpened,
             timeAgo: this.formatTimeAgo(f.lastOpened),
+            icon: f.icon,
           }));
       }
     } catch {
@@ -386,12 +396,4 @@ struct Index {
     if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`;
     return `${Math.floor(diff / 86400000)} 天前`;
   }
-}
-
-interface RecentFileItem {
-  path: string;
-  name: string;
-  lastOpened: number;
-  timeAgo: string;
-  icon?: string;
 }

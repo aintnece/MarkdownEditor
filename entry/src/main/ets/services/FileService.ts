@@ -120,7 +120,6 @@ Happy Writing! 🚀
       const documentPicker = new picker.DocumentViewPicker(this.context);
       const uris = await documentPicker.select({
         maxSelectCount: 1,
-        fileSuffixFilters: ['.md', '.markdown', '.mdown', '.txt'],
       });
       if (uris.length === 0) return null;
 
@@ -149,7 +148,7 @@ Happy Writing! 🚀
   async saveFile(path: string, content: string): Promise<boolean> {
     try {
       const file = fileIo.openSync(path, fileIo.OpenMode.READ_WRITE | fileIo.OpenMode.CREATE);
-      fileIo.writeTextSync(file.fd, content);
+      fileIo.writeSync(file.fd, content);
       fileIo.closeSync(file);
       this.addRecentFile({
         path,
@@ -166,18 +165,15 @@ Happy Writing! 🚀
   /** 另存为（通过选择器） */
   async saveFileAs(content: string, suggestedName?: string): Promise<string | null> {
     try {
-      const documentPicker = new picker.DocumentSaveOptions(this.context);
-      // 鸿蒙 API 可能需要特定实现
-      const uris = await picker.save({
-        context: this.context,
-        fileSuffixFilters: ['.md'],
-        defaultFileName: suggestedName || 'untitled.md',
+      const documentPicker = new picker.DocumentViewPicker(this.context);
+      const uris = await documentPicker.select({
+        maxSelectCount: 1,
       });
-
       if (uris.length === 0) return null;
+
       const uri = uris[0];
       const file = fileIo.openSync(uri, fileIo.OpenMode.READ_WRITE | fileIo.OpenMode.CREATE);
-      fileIo.writeTextSync(file.fd, content);
+      fileIo.writeSync(file.fd, content);
       fileIo.closeSync(file);
       return uri;
     } catch (err) {

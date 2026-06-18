@@ -48,7 +48,7 @@ export class PreferencesManager {
   async load(key: string, defaultValue?: string): Promise<string | undefined> {
     if (!this.prefModel) return defaultValue;
     try {
-      return await this.prefModel.get(key, defaultValue ?? '');
+      return await this.prefModel.get(key, defaultValue ?? '') as string;
     } catch {
       return defaultValue;
     }

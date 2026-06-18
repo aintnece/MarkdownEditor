@@ -16,42 +16,38 @@ import { webview } from '@kit.ArkWeb';
 import { MarkdownParser } from '../core/MarkdownParser';
 import { HtmlRenderer } from '../core/HtmlRenderer';
 import { ThemeColors } from '../services/ThemeService';
-import { ViewModel } from '../pages/EditorPage';
 
 @Component
 export struct MarkdownPreview {
   // ── 组件属性 ──
-  @Link @Watch('onContentChanged') content: string;
+  @Prop @Watch('onContentChanged') content: string;
   @Link themeColors: ThemeColors;
-  @Link fontSize: number;
-  @Link isDark: boolean;
+  @Prop fontSize: number;
+  @Prop isDark: boolean;
 
   // 回调
   private onHeadingClick?: (headingId: string) => void;
   private onScrollSync?: (scrollPercent: number) => void;
 
-  private controller: WebviewController = new WebviewController();
+  private controller: webview.WebviewController | null = null;
   private parser: MarkdownParser = new MarkdownParser('');
   private renderer: HtmlRenderer = new HtmlRenderer({ darkMode: false });
 
   aboutToAppear(): void {
-    // 初始化
+    this.controller = new webview.WebviewController();
   }
 
   build() {
-    Web({ src: this.getInitialHtml(), controller: this.controller })
+    Web({ src: this.getInitialHtml(), controller: this.controller! })
       .width('100%')
       .height('100%')
       .backgroundColor(this.themeColors.previewBg)
       .javaScriptAccess(true)
       .domStorageAccess(true)
-      .horizontalScrollBarAccess(ScrollBarState.Auto)
-      .verticalScrollBarAccess(ScrollBarState.Auto)
+      .horizontalScrollBarAccess(ScrollState.Auto)
+      .verticalScrollBarAccess(ScrollState.Auto)
       .onPageEnd(() => {
         this.renderPreview();
-      })
-      .onMessageReceive((msg: string) => {
-        this.handleWebMessage(msg);
       })
   }
 
@@ -87,7 +83,9 @@ export struct MarkdownPreview {
           totalHeight: document.body.scrollHeight
         });
       `;
-      this.controller.runJavaScript(jsCode);
+      if (this.controller) {
+        this.controller.runJavaScript(jsCode);
+      }
     } catch (err) {
       console.error('[MarkdownPreview] render error:', JSON.stringify(err));
     }
@@ -96,16 +94,12 @@ export struct MarkdownPreview {
   /** 处理来自 WebView 的消息 */
   private handleWebMessage(msg: string): void {
     try {
-      const data = JSON.parse(msg);
+      const data: Record<string, string> = JSON.parse(msg);
       switch (data.type) {
         case 'linkClick':
           if (data.url) {
             // 链接点击处理（可在外部浏览器打开）
-            try {
-              import('@kit.AbilityKit').then((kit) => {
-                kit.openLink(data.url);
-              });
-            } catch {}
+            console.log('[MarkdownPreview] link click:', data.url);
           }
           break;
         case 'headingClick':
@@ -120,7 +114,7 @@ export struct MarkdownPreview {
         case 'scroll':
           // 滚动事件同步
           if (this.onScrollSync) {
-            this.onScrollSync(data.percent);
+            this.onScrollSync(Number(data.percent));
           }
           break;
       }
@@ -135,7 +129,9 @@ export struct MarkdownPreview {
       const el = document.getElementById('${headingId}');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     `;
-    this.controller.runJavaScript(js);
+    if (this.controller) {
+      this.controller.runJavaScript(js);
+    }
   }
 
   /** 刷新预览（外部调用） */
@@ -145,14 +141,16 @@ export struct MarkdownPreview {
 
   /** 获取渲染后的纯文本（用于导出） */
   async getRenderedHtml(): Promise<string> {
-    return new Promise((resolve) => {
-      this.controller.runJavaScript(
-        'document.querySelector(".markdown-body")?.innerHTML || ""',
-        (err: string, result: string) => {
-          if (!err) resolve(result);
-          else resolve('');
-        }
+    if (!this.controller) {
+      return '';
+    }
+    try {
+      const result: string = await this.controller.runJavaScript(
+        'document.querySelector(".markdown-body")?.innerHTML || ""'
       );
-    });
+      return result;
+    } catch {
+      return '';
+    }
   }
 }

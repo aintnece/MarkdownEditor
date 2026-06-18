@@ -1,3 +1,5 @@
+import { ThemeColors } from '../services/ThemeService';
+
 /**
  * MarkdownEditor 组件
  *
@@ -14,9 +16,9 @@
 @Component
 export struct MarkdownEditor {
   // ── 组件属性 ──
-  @Link @Watch('onContentChange') content: string;
-  @Link themeColors: ThemeColors;
-  @Link fontSize: number;
+  @Prop @Watch('onContentChange') content: string;
+  @Prop themeColors: ThemeColors;
+  @Prop fontSize: number;
 
   // 内部状态
   @State private cursorLine: number = 1;
@@ -25,7 +27,7 @@ export struct MarkdownEditor {
   @State private scrollOffset: number = 0;
 
   // 回调
-  private onChange?: (text: string) => void;
+  onChange?: (text: string) => void;
   private onCursorChange?: (line: number, col: number) => void;
   private onScroll?: (offset: number) => void;
 
@@ -52,9 +54,7 @@ export struct MarkdownEditor {
         .fontColor(this.themeColors.editorFg)
         .backgroundColor(this.themeColors.editorBg)
         .caretColor(this.themeColors.editorCursor)
-        .selectedBackgroundColor(this.themeColors.editorSelection)
         .fontFamily("'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace")
-        .lineHeight(this.fontSize * 1.6)
         .padding({ left: 8, right: 8, top: 8, bottom: 8 })
         .borderRadius(0)
         .borderWidth(0)
@@ -62,10 +62,6 @@ export struct MarkdownEditor {
           this.content = value;
           this.updateLineCount();
           if (this.onChange) this.onChange(value);
-        })
-        .onScroll((xOffset: number, yOffset: number) => {
-          this.scrollOffset = yOffset;
-          if (this.onScroll) this.onScroll(yOffset);
         })
         .onTouch((event: TouchEvent) => {
           if (event.type === TouchType.Down) {
@@ -80,7 +76,6 @@ export struct MarkdownEditor {
             })
         )
         .copyOption(CopyOptions.LocalDevice)
-        .clip(true)
         .layoutWeight(1)
     }
     .width('100%')
@@ -190,6 +185,3 @@ export struct MarkdownEditor {
     this.lineCount = this.content.split('\n').length;
   }
 }
-
-// 引入类型
-import { ThemeColors } from '../services/ThemeService';

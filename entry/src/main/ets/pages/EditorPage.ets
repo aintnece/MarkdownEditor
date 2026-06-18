@@ -13,7 +13,7 @@
  *   3. Preview Only - 仅预览
  */
 
-import { router } from '@kit.AbilityKit';
+import { router } from '@kit.ArkUI';
 
 import { MarkdownEditor } from '../components/MarkdownEditor';
 import { MarkdownPreview } from '../components/MarkdownPreview';
@@ -51,6 +51,8 @@ export class EditorViewModel {
 
 @Observed
 class ThemeBridge {
+  name: string = '';
+  isDark: boolean = false;
   editorBg: string = '#ffffff';
   editorFg: string = '#24292e';
   editorLineNumber: string = '#959da5';
@@ -87,6 +89,8 @@ class ThemeBridge {
   }
 
   updateFromTheme(theme: ThemeColors): void {
+    this.name = theme.name;
+    this.isDark = theme.isDark;
     this.editorBg = theme.editorBg;
     this.editorFg = theme.editorFg;
     this.editorLineNumber = theme.editorLineNumber;
@@ -174,7 +178,7 @@ struct EditorPage {
 
   aboutToAppear(): void {
     // 初始化服务
-    const context = getContext(this);
+    const context = this.getContext();
     this.fileService = FileService.getInstance(context);
     this.exportService = new ExportService(context);
 

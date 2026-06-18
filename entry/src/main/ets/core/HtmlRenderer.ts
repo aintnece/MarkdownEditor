@@ -333,6 +333,7 @@ document.addEventListener('click', function(e) {
         'FOREIGN', 'REFERENCES', 'CASCADE'],
     };
     // 匹配广义语言名
+    const langLower = lang.toLowerCase();
     for (const [key, words] of Object.entries(map)) {
       if (langLower.includes(key)) return words;
     }
