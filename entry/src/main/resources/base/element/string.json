@@ -1,12 +1,44 @@
 {
-  "app_name": "Markdown 编辑器",
-  "description": "专为鸿蒙系统打造的 Markdown 编辑器",
-  "permission_read_media": "用于读取 Markdown 文件",
-  "permission_write_media": "用于保存 Markdown 文件",
-  "new_document": "新建文档",
-  "open_file": "打开文件",
-  "save_file": "保存文件",
-  "export": "导出",
-  "settings": "设置",
-  "dark_mode": "深色模式"
+  "string": [
+    {
+      "name": "app_name",
+      "value": "Markdown 编辑器"
+    },
+    {
+      "name": "description",
+      "value": "专为鸿蒙系统打造的 Markdown 编辑器"
+    },
+    {
+      "name": "permission_read_media",
+      "value": "用于读取 Markdown 文件"
+    },
+    {
+      "name": "permission_write_media",
+      "value": "用于保存 Markdown 文件"
+    },
+    {
+      "name": "new_document",
+      "value": "新建文档"
+    },
+    {
+      "name": "open_file",
+      "value": "打开文件"
+    },
+    {
+      "name": "save_file",
+      "value": "保存文件"
+    },
+    {
+      "name": "export",
+      "value": "导出"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "dark_mode",
+      "value": "深色模式"
+    }
+  ]
 }
