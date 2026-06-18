@@ -20,7 +20,7 @@ import { ThemeColors } from '../services/ThemeService';
 @Component
 export struct MarkdownPreview {
   // ── 组件属性 ──
-  @Prop @Watch('onContentChanged') content: string;
+  @Prop content: string;
   @Link themeColors: ThemeColors;
   @Prop fontSize: number;
   @Prop isDark: boolean;
@@ -44,8 +44,6 @@ export struct MarkdownPreview {
       .backgroundColor(this.themeColors.previewBg)
       .javaScriptAccess(true)
       .domStorageAccess(true)
-      .horizontalScrollBarAccess(ScrollState.Auto)
-      .verticalScrollBarAccess(ScrollState.Auto)
       .onPageEnd(() => {
         this.renderPreview();
       })

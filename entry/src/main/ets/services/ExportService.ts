@@ -157,9 +157,7 @@ export class ExportService {
   private async showSaveDialog(suffix: string): Promise<string | null> {
     try {
       const savePicker = new picker.DocumentViewPicker(this.context);
-      const uris = await savePicker.select({
-        maxSelectCount: 1,
-      });
+      const uris: string[] = await savePicker.select();
       return uris.length > 0 ? uris[0] : null;
     } catch {
       return null;

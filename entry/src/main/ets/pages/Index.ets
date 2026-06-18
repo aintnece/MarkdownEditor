@@ -330,9 +330,10 @@ struct Index {
   // ── 页面导航 ──
 
   private async createNewFile(): Promise<void> {
+    const params: Record<string, Object> = { newFile: true };
     router.pushUrl({
       url: 'pages/EditorPage',
-      params: { newFile: true } as Record<string, Object>,
+      params,
     });
   }
 
@@ -345,9 +346,10 @@ struct Index {
       });
 
       if (uris.length > 0) {
+        const params: Record<string, Object> = { filePath: uris[0] };
         router.pushUrl({
           url: 'pages/EditorPage',
-          params: { filePath: uris[0] } as Record<string, Object>,
+          params,
         });
       }
     } catch (err) {
@@ -356,16 +358,18 @@ struct Index {
   }
 
   private createQuickNote(): void {
+    const params: Record<string, Object> = { newFile: true, quickNote: true };
     router.pushUrl({
       url: 'pages/EditorPage',
-      params: { newFile: true, quickNote: true } as Record<string, Object>,
+      params,
     });
   }
 
   private openRecentFile(file: RecentFileItem): void {
+    const params: Record<string, Object> = { filePath: file.path };
     router.pushUrl({
       url: 'pages/EditorPage',
-      params: { filePath: file.path } as Record<string, Object>,
+      params,
     });
   }
 
@@ -376,12 +380,12 @@ struct Index {
         const files: RecentFileItem[] = JSON.parse(data);
         this.recentFiles = files.slice(0, 10)
           .sort((a, b) => b.lastOpened - a.lastOpened)
-          .map(f => ({
+          .map((f: RecentFileItem): RecentFileItem => ({
             path: f.path,
             name: f.name,
             lastOpened: f.lastOpened,
             timeAgo: this.formatTimeAgo(f.lastOpened),
-            icon: f.icon,
+            icon: f.icon, 
           }));
       }
     } catch {

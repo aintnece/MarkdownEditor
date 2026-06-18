@@ -118,15 +118,12 @@ Happy Writing! 🚀
   async openFile(): Promise<{ path: string; content: string } | null> {
     try {
       const documentPicker = new picker.DocumentViewPicker(this.context);
-      const uris = await documentPicker.select({
-        maxSelectCount: 1,
-      });
+      const uris: string[] = await documentPicker.select();
       if (uris.length === 0) return null;
 
       const uri = uris[0];
-      const file = fileIo.openSync(uri, fileIo.OpenMode.READ_ONLY);
-      const content = fileIo.readTextSync(file.fd);
-      fileIo.closeSync(file);
+      const content = fileIo.readTextSync(uri);
+      fileIo.closeSync(fileIo.openSync(uri, fileIo.OpenMode.READ_ONLY));
 
       const fileInfo = await this.getFileInfo(uri);
       if (fileInfo) {
@@ -166,9 +163,7 @@ Happy Writing! 🚀
   async saveFileAs(content: string, suggestedName?: string): Promise<string | null> {
     try {
       const documentPicker = new picker.DocumentViewPicker(this.context);
-      const uris = await documentPicker.select({
-        maxSelectCount: 1,
-      });
+      const uris: string[] = await documentPicker.select();
       if (uris.length === 0) return null;
 
       const uri = uris[0];
@@ -186,7 +181,7 @@ Happy Writing! 🚀
   async readFile(path: string): Promise<string | null> {
     try {
       const file = fileIo.openSync(path, fileIo.OpenMode.READ_ONLY);
-      const content = fileIo.readTextSync(file.fd);
+      const content = fileIo.readTextSync(path);
       fileIo.closeSync(file);
       return content;
     } catch (err) {
