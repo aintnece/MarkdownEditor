@@ -24,8 +24,7 @@
             "entities": ["entity.system.home"],
             "actions": ["action.system.home"]
           }
-        ],
-        "configChanges": ["locale", "layoutDirection", "fontSize", "orientation"]
+        ]
       }
     ],
     "requestPermissions": [
