@@ -23,6 +23,10 @@ interface RecentFileItem {
   icon?: string;
 }
 
+class NavData {
+  filePath: string = '';
+}
+
 @Observed
 class HomeThemeBridge {
   bg: string = '#ffffff';
@@ -328,10 +332,6 @@ struct Index {
   }
 
 // ── 页面导航 ──
-
-class NavData {
-  filePath: string = '';
-}
 
   private async createNewFile(): Promise<void> {
     router.pushUrl({ url: 'pages/EditorPage' });
