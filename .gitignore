@@ -1,0 +1,34 @@
+# ── 依赖目录 ──────────────────────────────
+oh_modules/
+.ohpm/
+
+# ── 构建产物 ──────────────────────────────
+build/
+entry/build/
+*.hap
+*.app
+
+# ── IDE 本地配置 ──────────────────────────
+.idea/
+*.iml
+local.properties
+
+# ── Hvigor 缓存 ──────────────────────────
+.hvigor/
+.hvigor_config/
+
+# ── Node 相关 ────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ── 测试报告 ──────────────────────────────
+reports/
+test-results/
+
+# ── 系统文件 ──────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
