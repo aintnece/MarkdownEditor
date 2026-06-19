@@ -21,7 +21,6 @@ import {
   LineBreakNode, HtmlBlockNode, HtmlInlineNode,
   MathBlockNode, MathInlineNode,
 } from './MarkdownAST';
-import { latexToUnicode } from './LatexToUnicode';
 
 // ─── 渲染器配置 ───────────────────────────────────
 
@@ -201,15 +200,13 @@ document.addEventListener('click', function(e) {
   /** 渲染块级数学 $$...$$ */
   private renderMathBlock(node: MathBlockNode): string {
     const formula = this.escapeHtml(node.formula);
-    const unicode = latexToUnicode(formula);
-    return `<div class="math-block">${unicode}</div>`;
+    return `<div class="math-block">$$${formula}$$</div>`;
   }
 
   /** 渲染行内数学 $...$ */
   private renderMathInline(node: MathInlineNode): string {
     const formula = this.escapeHtml(node.formula);
-    const unicode = latexToUnicode(formula);
-    return `<span class="math-inline">${unicode}</span>`;
+    return `<span class="math-inline">$${formula}$</span>`;
   }
 
   private renderTable(node: TableNode): string {
