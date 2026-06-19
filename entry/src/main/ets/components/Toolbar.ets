@@ -10,9 +10,8 @@ import { ThemeColors } from '../services/ThemeService';
  *   - 编辑操作（撤销/重做/缩进）
  *   - 分割面板控制（编辑/预览/分屏切换）
  *   - 导出按钮
- *   - 鼠标悬停显示功能提示
+ *   - 鼠标悬停显示浮层气泡提示
  */
-
 @Component
 export struct Toolbar {
   // ── 组件属性 ──
@@ -24,47 +23,102 @@ export struct Toolbar {
   // 视图模式
   @Link viewMode: ViewMode;
 
-  // 鼠标悬停状态（显示 tooltip）
-  @State private hoveredButton: string = '';
+  // 每个按钮的 popup 显示状态
+  @State private boldPopup: boolean = false;
+  @State private italicPopup: boolean = false;
+  @State private strikePopup: boolean = false;
+  @State private inlineCodePopup: boolean = false;
+  @State private headingPopup: boolean = false;
+  @State private blockquotePopup: boolean = false;
+  @State private ulistPopup: boolean = false;
+  @State private olistPopup: boolean = false;
+  @State private codeBlockPopup: boolean = false;
+  @State private linkPopup: boolean = false;
+  @State private imagePopup: boolean = false;
+  @State private tablePopup: boolean = false;
+  @State private hrPopup: boolean = false;
+  @State private taskPopup: boolean = false;
+  @State private editPopup: boolean = false;
+  @State private splitPopup: boolean = false;
+  @State private previewPopup: boolean = false;
+  @State private undoPopup: boolean = false;
+  @State private redoPopup: boolean = false;
+  @State private exportPopup: boolean = false;
 
   build() {
-    Column({ space: 0 }) {
-      Row() {
-        this.buildStyleGroup();
-        this.buildDivider();
-        this.buildBlockGroup();
-        this.buildDivider();
-        this.buildInsertGroup();
-        this.buildDivider();
-        this.buildViewGroup();
-        this.buildSpacer();
-        this.buildExtraGroup();
-      }
-      .width('100%')
-      .height(44)
-      .padding({ left: 8, right: 8 })
-      .backgroundColor(this.themeColors.toolbarBg)
-
-      // 工具提示条（鼠标悬停时显示）
-      if (this.hoveredButton !== '') {
-        Text(this.getTooltip(this.hoveredButton))
-          .fontSize(11)
-          .fontColor('#ffffff')
-          .backgroundColor(this.themeColors.toolbarActive)
-          .width('100%')
-          .height(20)
-          .padding({ left: 10, right: 10 })
-          .textAlign(TextAlign.Start)
-      }
+    Row() {
+      this.buildStyleGroup();
+      this.buildDivider();
+      this.buildBlockGroup();
+      this.buildDivider();
+      this.buildInsertGroup();
+      this.buildDivider();
+      this.buildViewGroup();
+      this.buildSpacer();
+      this.buildExtraGroup();
     }
     .width('100%')
+    .height(44)
+    .padding({ left: 8, right: 8 })
+    .backgroundColor(this.themeColors.toolbarBg)
     .border({ width: { bottom: 1 }, color: this.themeColors.previewBorder })
+  }
+
+  // ── 工具方法 ──
+
+  /** 设置 popup 显示状态 */
+  private setPopup(name: string, show: boolean): void {
+    if (name === 'bold') { this.boldPopup = show; }
+    else if (name === 'italic') { this.italicPopup = show; }
+    else if (name === 'strikethrough') { this.strikePopup = show; }
+    else if (name === 'inlineCode') { this.inlineCodePopup = show; }
+    else if (name === 'heading') { this.headingPopup = show; }
+    else if (name === 'blockquote') { this.blockquotePopup = show; }
+    else if (name === 'ulist') { this.ulistPopup = show; }
+    else if (name === 'olist') { this.olistPopup = show; }
+    else if (name === 'codeBlock') { this.codeBlockPopup = show; }
+    else if (name === 'link') { this.linkPopup = show; }
+    else if (name === 'image') { this.imagePopup = show; }
+    else if (name === 'table') { this.tablePopup = show; }
+    else if (name === 'hr') { this.hrPopup = show; }
+    else if (name === 'task') { this.taskPopup = show; }
+    else if (name === 'edit') { this.editPopup = show; }
+    else if (name === 'split') { this.splitPopup = show; }
+    else if (name === 'preview') { this.previewPopup = show; }
+    else if (name === 'undo') { this.undoPopup = show; }
+    else if (name === 'redo') { this.redoPopup = show; }
+    else if (name === 'export') { this.exportPopup = show; }
+  }
+
+  /** 获取 popup 显示状态 */
+  private getPopup(name: string): boolean {
+    if (name === 'bold') return this.boldPopup;
+    if (name === 'italic') return this.italicPopup;
+    if (name === 'strikethrough') return this.strikePopup;
+    if (name === 'inlineCode') return this.inlineCodePopup;
+    if (name === 'heading') return this.headingPopup;
+    if (name === 'blockquote') return this.blockquotePopup;
+    if (name === 'ulist') return this.ulistPopup;
+    if (name === 'olist') return this.olistPopup;
+    if (name === 'codeBlock') return this.codeBlockPopup;
+    if (name === 'link') return this.linkPopup;
+    if (name === 'image') return this.imagePopup;
+    if (name === 'table') return this.tablePopup;
+    if (name === 'hr') return this.hrPopup;
+    if (name === 'task') return this.taskPopup;
+    if (name === 'edit') return this.editPopup;
+    if (name === 'split') return this.splitPopup;
+    if (name === 'preview') return this.previewPopup;
+    if (name === 'undo') return this.undoPopup;
+    if (name === 'redo') return this.redoPopup;
+    if (name === 'export') return this.exportPopup;
+    return false;
   }
 
   /** 根据命令名获取中文提示 */
   private getTooltip(command: string): string {
-    if (command === 'bold') return '粗体';
-    if (command === 'italic') return '斜体';
+    if (command === 'bold') return '粗体 (Ctrl+B)';
+    if (command === 'italic') return '斜体 (Ctrl+I)';
     if (command === 'strikethrough') return '删除线';
     if (command === 'inlineCode') return '行内代码';
     if (command === 'heading') return '标题';
@@ -78,13 +132,15 @@ export struct Toolbar {
     if (command === 'hr') return '插入分割线';
     if (command === 'task') return '任务列表';
     if (command === 'edit') return '仅编辑模式';
-    if (command === 'split') return '分屏模式（编辑+预览）';
+    if (command === 'split') return '分屏模式';
     if (command === 'preview') return '仅预览模式';
     if (command === 'undo') return '撤销';
     if (command === 'redo') return '重做';
     if (command === 'export') return '导出为 HTML 文件';
     return command;
   }
+
+  // ── 按钮组 ──
 
   @Builder
   buildStyleGroup() {
@@ -137,8 +193,16 @@ export struct Toolbar {
     .onClick(() => {
       if (this.onExport) this.onExport();
     })
+    .bindPopup(this.exportPopup, {
+      message: this.getTooltip('export'),
+      placement: Placement.Bottom,
+      showInSubWindow: false,
+      onStateChange: (e) => {
+        if (!e.isVisible) this.exportPopup = false;
+      }
+    })
     .onHover((isHover: boolean, _event: HoverEvent) => {
-      this.hoveredButton = isHover ? 'export' : '';
+      this.exportPopup = isHover;
     })
   }
 
@@ -159,8 +223,16 @@ export struct Toolbar {
     .onClick(() => {
       if (this.onCommand) this.onCommand(command);
     })
+    .bindPopup(this.getPopup(command), {
+      message: this.getTooltip(command),
+      placement: Placement.Bottom,
+      showInSubWindow: false,
+      onStateChange: (e) => {
+        if (!e.isVisible) this.setPopup(command, false);
+      }
+    })
     .onHover((isHover: boolean, _event: HoverEvent) => {
-      this.hoveredButton = isHover ? command : '';
+      this.setPopup(command, isHover);
     })
   }
 
