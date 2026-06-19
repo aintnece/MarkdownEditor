@@ -40,8 +40,10 @@ export struct MarkdownPreview {
       .javaScriptAccess(true)
       .domStorageAccess(true)
       .focusable(false)
-      .onInterceptRequest((event: WebResourceRequest) => {
-        const url: string = event.request.getRequestUrl();
+      .onInterceptRequest((event) => {
+        if (!event) return;
+        const request = event.request;
+        const url: string = request.getRequestUrl();
         // 拦截 KaTeX CDN 请求，返回本地 rawfile 中的资源
         if (url.startsWith(KATEX_PREFIX)) {
           const path: string = url.substring(KATEX_PREFIX.length);
