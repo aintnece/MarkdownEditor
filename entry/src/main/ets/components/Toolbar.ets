@@ -124,7 +124,7 @@ export struct Toolbar {
     .backgroundColor(active ? this.themeColors.toolbarHover : Color.Transparent)
     .borderRadius(4).margin({ left: 2, right: 2 })
     .onClick(() => { if (this.onCommand) this.onCommand(cmd); })
-    .bindPopup($$, { message: this.tip(cmd) })
+    .bindPopup($$, { message: this.tip(cmd), showInSubWindow: true })
     .onHover((isHover: boolean) => { this.setPop(cmd, isHover); })
   }
 
@@ -136,7 +136,7 @@ export struct Toolbar {
     .backgroundColor(this.themeColors.toolbarBg).borderRadius(4)
     .border({ width: 1, color: this.themeColors.previewBorder }).margin({ left: 4 })
     .onClick(() => { if (this.onExport) this.onExport(); })
-    .bindPopup(this.popExport, { message: this.tip('export') })
+    .bindPopup(this.popExport, { message: this.tip('export'), showInSubWindow: true })
     .onHover((isHover: boolean) => { this.popExport = isHover; })
   }
 
