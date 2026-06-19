@@ -1,4 +1,5 @@
 import { webview } from '@kit.ArkWeb';
+import { resourceManager } from '@kit.LocalizationKit';
 import { MarkdownParser } from '../core/MarkdownParser';
 import { HtmlRenderer } from '../core/HtmlRenderer';
 import { ThemeColors } from '../services/ThemeService';
@@ -65,7 +66,12 @@ export struct MarkdownPreview {
           resp.setResponseCode(200);
           resp.setReasonMessage('OK');
           try {
-            resp.setResponseData($rawfile('katex/' + path));
+            // 二进制文件（字体）用 resourceManager 读取 ArrayBuffer
+            const ctx = getContext();
+            const resMgr = ctx.resourceManager;
+            const rawPath: string = 'katex/' + path;
+            const data = resMgr.getRawFileContentSync(rawPath);
+            resp.setResponseData(data.buffer as ArrayBuffer);
             resp.setResponseIsReady(true);
             return resp;
           } catch (e) {
