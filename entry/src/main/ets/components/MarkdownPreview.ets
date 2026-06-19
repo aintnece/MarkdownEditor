@@ -74,6 +74,8 @@ export struct MarkdownPreview {
             const copy: Uint8Array = new Uint8Array(data.byteLength);
             copy.set(data);
             resp.setResponseData(copy.buffer);
+            // CORS: 允许自定义域名加载字体
+            resp.setResponseHeader('Access-Control-Allow-Origin', 'https://markdown.local', false);
             resp.setResponseIsReady(true);
             return resp;
           } catch (e) {
