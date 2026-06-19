@@ -20,7 +20,7 @@ import { ThemeColors } from '../services/ThemeService';
 @Component
 export struct MarkdownPreview {
   // ── 组件属性 ──
-  @Prop content: string;
+  @Prop @Watch('onContentChange') content: string;
   @Link themeColors: ThemeColors;
   @Prop fontSize: number;
   @Prop isDark: boolean;
@@ -32,9 +32,17 @@ export struct MarkdownPreview {
   private controller: webview.WebviewController | null = null;
   private parser: MarkdownParser = new MarkdownParser('');
   private renderer: HtmlRenderer = new HtmlRenderer({ darkMode: false });
+  private isReady: boolean = false;
 
   aboutToAppear(): void {
     this.controller = new webview.WebviewController();
+  }
+
+  /** 内容变化时自动刷新预览 */
+  onContentChange(): void {
+    if (this.isReady) {
+      this.renderPreview();
+    }
   }
 
   build() {
@@ -45,6 +53,7 @@ export struct MarkdownPreview {
       .javaScriptAccess(true)
       .domStorageAccess(true)
       .onPageEnd(() => {
+        this.isReady = true;
         this.renderPreview();
       })
   }
