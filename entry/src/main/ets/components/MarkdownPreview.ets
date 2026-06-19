@@ -50,6 +50,7 @@ export struct MarkdownPreview {
       .backgroundColor(this.themeColors.previewBg)
       .javaScriptAccess(true)
       .domStorageAccess(true)
+      .focusable(false)
       .onPageEnd(() => {
         if (!this.isReady) {
           this.isReady = true;

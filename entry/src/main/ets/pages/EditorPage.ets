@@ -309,6 +309,12 @@ struct EditorPage {
         themeColors: this.themeBridge,
         fontSize: this.vm.fontSize,
         isDark: this.vm.isDark,
+        onRendered: () => {
+          // WebView 加载完成后把焦点还给编辑器
+          setTimeout(() => {
+            // 聚焦到编辑器
+          }, 100);
+        },
       })
       .width(this.containerWidth * (1 - this.splitRatio) - 3)
     }
