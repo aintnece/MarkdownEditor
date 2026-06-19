@@ -17,6 +17,8 @@ export struct MarkdownPreview {
   @Prop fontSize: number;
   @Prop isDark: boolean;
 
+  onRendered?: () => void;
+
   private controller: webview.WebviewController | null = null;
   private isReady: boolean = false;
   private debounceTimer: number | null = null;
@@ -51,11 +53,11 @@ export struct MarkdownPreview {
       .onPageEnd(() => {
         if (!this.isReady) {
           this.isReady = true;
-          // 首次加载：内容不为空且和上次不同才渲染
           if (this.content !== '' && this.content !== this.lastRendered) {
             this.doRender();
           }
         }
+        if (this.onRendered) this.onRendered();
       })
   }
 

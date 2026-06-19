@@ -54,8 +54,15 @@ export class MarkdownParser {
 
   constructor(input: string, config?: Partial<ParserConfig>) {
     this.input = input;
-    // ArkTS 不支持对象展开（arkts-no-spread），用默认值+覆盖
-    this.config = DefaultConfig;
+    // 直接新对象，不引用 const DefaultConfig（避免 ArkTS 引用问题）
+    const def: ParserConfig = {
+      enableTables: true,
+      enableTaskLists: true,
+      enableStrikethrough: true,
+      enableAutoLinks: true,
+      enableMath: true,
+    };
+    this.config = def;
     if (config) {
       if (config.enableTables !== undefined) this.config.enableTables = config.enableTables;
       if (config.enableTaskLists !== undefined) this.config.enableTaskLists = config.enableTaskLists;
