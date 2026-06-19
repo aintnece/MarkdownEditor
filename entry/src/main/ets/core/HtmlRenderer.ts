@@ -170,12 +170,28 @@ document.addEventListener('click', function(e) {
   /** 基础 LaTeX 回退：^{} → ^(...), _{} → _(...), \, → 空格 */
   private fixMathFallback(text: string): string {
     let result: string = text;
-    result = result.replace(/\^\{([^}]*)\}/g, '^($1)');
-    result = result.replace(/\_\{([^}]*)\}/g, '_($1)');
-    result = result.replace(/\\,/g, ' ');
-    result = result.replace(/\\;/g, ' ');
-    result = result.replace(/\\:/g, ' ');
-    result = result.replace(/\\!/g, '');
+    // 替换 ^{...} 和 _{...}
+    result = this.replaceBraces(result, '^');
+    result = this.replaceBraces(result, '_');
+    return result;
+  }
+
+  /** 将 ^{...} 替换为 ^(...), _{...} 替换为 _(...) */
+  private replaceBraces(text: string, marker: string): string {
+    let result: string = text;
+    let i: number = 0;
+    while (i < result.length - 1) {
+      if (result[i] === marker && result[i + 1] === '{') {
+        const close: number = result.indexOf('}', i + 2);
+        if (close >= 0) {
+          const content: string = result.substring(i + 2, close);
+          result = result.substring(0, i) + marker + '(' + content + ')' + result.substring(close + 1);
+          i += content.length + 3;
+          continue;
+        }
+      }
+      i++;
+    }
     return result;
   }
 
