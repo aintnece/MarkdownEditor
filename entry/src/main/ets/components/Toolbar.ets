@@ -23,6 +23,9 @@ export struct Toolbar {
   // 视图模式
   @Link viewMode: ViewMode;
 
+  // 鼠标悬停状态（绑定 tooltip 显示）
+  @State private hoveredButton: string = '';
+
   build() {
     Row() {
       this.buildStyleGroup();
@@ -114,6 +117,17 @@ export struct Toolbar {
     .onClick(() => {
       if (this.onExport) this.onExport();
     })
+    .bindPopup({
+      message: '导出为 HTML',
+      placement: Placement.Bottom,
+      show: this.hoveredButton === 'export',
+      popupColor: this.themeColors.toolbarActive,
+      textColor: '#ffffff',
+      enableArrow: true,
+    })
+    .onHover((isHover: boolean, _event: HoverEvent) => {
+      this.hoveredButton = isHover ? 'export' : '';
+    })
   }
 
   @Builder
@@ -132,6 +146,17 @@ export struct Toolbar {
     .margin({ left: 2, right: 2 })
     .onClick(() => {
       if (this.onCommand) this.onCommand(command);
+    })
+    .bindPopup({
+      message: tooltip,
+      placement: Placement.Bottom,
+      show: this.hoveredButton === command,
+      popupColor: this.themeColors.toolbarActive,
+      textColor: '#ffffff',
+      enableArrow: true,
+    })
+    .onHover((isHover: boolean, _event: HoverEvent) => {
+      this.hoveredButton = isHover ? command : '';
     })
   }
 
