@@ -59,17 +59,11 @@ export class HtmlRenderer {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- KaTeX 数学公式渲染 -->
+<!-- KaTeX 数学公式渲染（CDN 不可用时回退到样式化的 raw text） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
-  onload="renderMathInElement(document.body, {
-    delimiters: [
-      {left: '$$', right: '$$', display: true},
-      {left: '$', right: '$', display: false}
-    ],
-    throwOnError: false
-  });"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"
+  onerror="document.getElementById('katex-fallback').removeAttribute('hidden')"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <style>
 ${this.getStyles()}
 </style>
@@ -78,13 +72,31 @@ ${this.getStyles()}
 <article class="markdown-body">
 ${bodyContent}
 </article>
+<!-- KaTeX 加载失败时的回退脚本 -->
+<script id="katex-fallback" hidden>
+(function() {
+  var tryRender = function() {
+    if (typeof renderMathInElement === 'function') {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false}
+        ],
+        throwOnError: false
+      });
+    } else {
+      setTimeout(tryRender, 500);
+    }
+  };
+  setTimeout(tryRender, 1000);
+})();
+</script>
 <script>
 // 任务列表点击回调
 document.addEventListener('click', function(e) {
-  const checkbox = e.target.closest('input[type="checkbox"]');
+  var checkbox = e.target.closest('input[type="checkbox"]');
   if (checkbox) {
     checkbox.disabled = false;
-    // 通知原生层
     if (window.__markdownBridge) {
       window.__markdownBridge.onTaskToggle(checkbox.dataset.index);
     }
@@ -417,9 +429,9 @@ strong { font-weight: 600; }
 em { font-style: italic; }
 del { text-decoration: line-through; }
 
-/* 数学公式 */
-.math-block { text-align: center; margin: 16px 0; overflow-x: auto; padding: 4px 0; }
-.math-inline { display: inline-block; vertical-align: middle; padding: 0 2px; }
+/* 数学公式（KaTeX 渲染成功时被完全替换，此处为 CDN 不可用时的回退样式） */
+.math-block { text-align: center; margin: 16px 0; overflow-x: auto; padding: 8px 0; font-family: 'Times New Roman', 'Latin Modern Math', serif; font-size: 1.2em; font-style: italic; background: ${darkMode ? '#252545' : '#f8f9fa'}; border-radius: 4px; color: ${fg}; }
+.math-inline { display: inline-block; vertical-align: middle; padding: 0 3px; font-family: 'Times New Roman', 'Latin Modern Math', serif; font-style: italic; color: ${fg}; }
 
 /* 响应式 */
 @media (max-width: 480px) {
