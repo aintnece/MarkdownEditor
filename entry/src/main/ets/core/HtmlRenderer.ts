@@ -68,20 +68,6 @@ ${this.getStyles()}
 ${bodyContent}
 </article>
 <script>
-// 数学公式上下标回退
-(function() {
-  var els = document.querySelectorAll('.math-inline, .math-block');
-  for (var i = 0; i < els.length; i++) {
-    els[i].innerHTML = els[i].innerHTML
-      .replace(/\^\{([^}]*)\}/g, '<sup>$1</sup>')
-      .replace(/\_\{(.*?)\}/g, '<sub>$1</sub>')
-      .replace(/\^([a-zA-Z0-9])/g, '<sup>$1</sup>')
-      .replace(/\_([a-zA-Z0-9])/g, '<sub>$1</sub>')
-      .replace(/\\\\,|\\\\;|\\\\:/g, ' ')
-      .replace(/\\\\!/g, '');
-  }
-})();
-
 document.addEventListener('click', function(e) {
   var checkbox = e.target.closest('input[type="checkbox"]');
   if (checkbox) checkbox.disabled = false;
@@ -171,16 +157,26 @@ document.addEventListener('click', function(e) {
     return `<pre><code class="language-${lang}">${highlighted}</code></pre>`;
   }
 
-  /** 渲染块级数学 $$...$$ */
   private renderMathBlock(node: MathBlockNode): string {
-    const formula = this.escapeHtml(node.formula);
+    const formula = this.fixMathFallback(this.escapeHtml(node.formula));
     return `<div class="math-block">${formula}</div>`;
   }
 
-  /** 渲染行内数学 $...$ */
   private renderMathInline(node: MathInlineNode): string {
-    const formula = this.escapeHtml(node.formula);
+    const formula = this.fixMathFallback(this.escapeHtml(node.formula));
     return `<span class="math-inline">${formula}</span>`;
+  }
+
+  /** 基础 LaTeX 回退：^{} → ^(...), _{} → _(...), \, → 空格 */
+  private fixMathFallback(text: string): string {
+    let result: string = text;
+    result = result.replace(/\^\{([^}]*)\}/g, '^($1)');
+    result = result.replace(/\_\{([^}]*)\}/g, '_($1)');
+    result = result.replace(/\\,/g, ' ');
+    result = result.replace(/\\;/g, ' ');
+    result = result.replace(/\\:/g, ' ');
+    result = result.replace(/\\!/g, '');
+    return result;
   }
 
   private renderTable(node: TableNode): string {
