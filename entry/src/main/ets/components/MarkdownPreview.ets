@@ -75,8 +75,7 @@ export struct MarkdownPreview {
             copy.set(data);
             resp.setResponseData(copy.buffer);
             // CORS: 允许自定义域名加载字体
-            const corsHeader: webview.Header = { headerKey: 'Access-Control-Allow-Origin', headerValue: 'https://markdown.local' } as webview.Header;
-            resp.setResponseHeader([corsHeader]);
+            resp.setResponseHeader([{ headerKey: 'Access-Control-Allow-Origin', headerValue: 'https://markdown.local' }]);
             resp.setResponseIsReady(true);
             return resp;
           } catch (e) {
