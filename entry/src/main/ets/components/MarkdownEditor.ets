@@ -4,32 +4,20 @@ import { ThemeColors } from '../services/ThemeService';
  * MarkdownEditor 组件
  *
  * 基于 TextArea 的 Markdown 编辑器核心组件。
- * 提供：
- *   - 文本编辑（输入/删除/选择）
- *   - 行号显示
- *   - 语法高亮（通过 span 覆盖层）
- *   - 当前行高亮
- *   - 缩进/反缩进
- *   - Tab 键处理（插入 4 空格）
  */
 
 @Component
 export struct MarkdownEditor {
-  // ── 组件属性 ──
   @Prop content: string;
   @Prop themeColors: ThemeColors;
   @Prop fontSize: number;
 
-  // 内部状态
   @State private cursorLine: number = 1;
   @State private cursorCol: number = 1;
   @State private lineCount: number = 1;
   @State private scrollOffset: number = 0;
 
-  // 回调
   onChange?: (text: string) => void;
-  private onCursorChange?: (line: number, col: number) => void;
-  private onScroll?: (offset: number) => void;
 
   private controller: TextAreaController = new TextAreaController();
 
@@ -39,10 +27,8 @@ export struct MarkdownEditor {
 
   build() {
     Row() {
-      // 行号栏
       this.buildLineNumberGutter();
 
-      // 编辑器主体
       TextArea({
         text: this.content,
         placeholder: '开始编辑 Markdown...',
@@ -62,18 +48,6 @@ export struct MarkdownEditor {
           if (this.onChange) this.onChange(value);
           this.updateLineCount();
         })
-        .onTouch((event: TouchEvent) => {
-          if (event.type === TouchType.Down) {
-            // 估算光标位置（TextArea 没有直接 API）
-            // 通过内容变化触发的 onChange 跟踪位置
-          }
-        })
-        .gesture(
-          LongPressGesture({ repeat: false, duration: 500 })
-            .onAction(() => {
-              // 上下文菜单
-            })
-        )
         .copyOption(CopyOptions.LocalDevice)
         .layoutWeight(1)
     }
@@ -82,11 +56,9 @@ export struct MarkdownEditor {
     .backgroundColor(this.themeColors.editorBg)
   }
 
-  /** 行号栏 */
   @Builder
   buildLineNumberGutter() {
     Column() {
-      // 显示当前可见行
       ForEach(this.getVisibleLines(), (lineNum: number) => {
         Text(lineNum.toString())
           .fontSize(this.fontSize * 0.85)
@@ -119,9 +91,6 @@ export struct MarkdownEditor {
     return lines;
   }
 
-  // ── 公共方法 ──
-
-  /** 插入文本到光标位置 */
   insertAtCursor(text: string): void {
     const newContent = this.content + text;
     this.content = newContent;
@@ -129,20 +98,16 @@ export struct MarkdownEditor {
     this.updateLineCount();
   }
 
-  /** 替换选中文本 */
   replaceSelection(replacement: string): void {
-    // 简化为追加（TextArea 的选中操作受限）
     this.insertAtCursor(replacement);
   }
 
-  /** 获取当前行内容 */
   getCurrentLine(): string {
     const lines = this.content.split('\n');
     const idx = Math.min(this.cursorLine - 1, lines.length - 1);
     return idx >= 0 ? lines[idx] : '';
   }
 
-  /** 缩进当前行 */
   indentLine(): void {
     const lines = this.content.split('\n');
     const idx = Math.min(this.cursorLine - 1, lines.length - 1);
@@ -153,7 +118,6 @@ export struct MarkdownEditor {
     }
   }
 
-  /** 反缩进当前行 */
   unindentLine(): void {
     const lines = this.content.split('\n');
     const idx = Math.min(this.cursorLine - 1, lines.length - 1);
@@ -164,17 +128,12 @@ export struct MarkdownEditor {
     }
   }
 
-  /** 滚动到指定行 */
   scrollToLine(line: number): void {
-    // TextArea 不支持直接跳转行，此处保留接口
   }
 
-  /** 设置焦点 */
   focus(): void {
     this.controller.caretPosition(0);
   }
-
-  // ── 内部方法 ──
 
   private updateLineCount(): void {
     this.lineCount = this.content.split('\n').length;
