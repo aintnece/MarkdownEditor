@@ -2,8 +2,7 @@
  * MarkdownPreview 组件
  *
  * 基于 WebView 的 Markdown 实时预览组件。
- * 使用 controller.loadData() 加载渲染后的 HTML。
- * 带防抖处理，防止每敲一个字符就全量重渲染。
+ * 使用 loadUrl(data URI) + 防抖，避免无限循环和卡顿。
  */
 
 import { webview } from '@kit.ArkWeb';
@@ -19,10 +18,10 @@ export struct MarkdownPreview {
   @Prop isDark: boolean;
 
   private controller: webview.WebviewController | null = null;
-  private parser: MarkdownParser = new MarkdownParser('');
-  private renderer: HtmlRenderer = new HtmlRenderer({ darkMode: false });
   private isReady: boolean = false;
   private debounceTimer: number | null = null;
+  // 缓存上次渲染的内容，防止 loadUrl → onPageEnd 循环
+  private lastRendered: string = '';
 
   aboutToAppear(): void {
     this.controller = new webview.WebviewController();
@@ -38,7 +37,7 @@ export struct MarkdownPreview {
     }
     this.debounceTimer = setTimeout(() => {
       this.debounceTimer = null;
-      this.renderPreview();
+      this.doRender();
     }, 300);
   }
 
@@ -50,13 +49,22 @@ export struct MarkdownPreview {
       .javaScriptAccess(true)
       .domStorageAccess(true)
       .onPageEnd(() => {
-        this.isReady = true;
-        this.renderPreview();
+        if (!this.isReady) {
+          this.isReady = true;
+          // 首次加载：内容不为空且和上次不同才渲染
+          if (this.content !== '' && this.content !== this.lastRendered) {
+            this.doRender();
+          }
+        }
       })
   }
 
-  /** 渲染完整 HTML 到 WebView */
-  renderPreview(): void {
+  /** 仅在内容变动时执行渲染 */
+  private doRender(): void {
+    if (this.content === this.lastRendered) {
+      return; // 内容没变，跳过（阻断 loadUrl → onPageEnd 循环）
+    }
+    this.lastRendered = this.content;
     try {
       const parser = new MarkdownParser(this.content);
       const ast = parser.parse();
