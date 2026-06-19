@@ -178,6 +178,8 @@ struct EditorPage {
   @State private viewMode: ViewMode = ViewMode.Split;
   @State private splitRatio: number = 0.55;
   @State private containerWidth: number = 800;
+  @State private lastPanX: number = 0;
+  @State private dividerHover: boolean = false;
 
   private fileService: FileService | null = null;
   private exportService: ExportService | null = null;
@@ -284,15 +286,22 @@ struct EditorPage {
       Column()
         .width(6)
         .height('100%')
-        .backgroundColor(this.themeBridge.previewBorder)
+        .backgroundColor(this.dividerHover ? '#0366d6' : this.themeBridge.previewBorder)
         .gesture(
           PanGesture({ direction: PanDirection.Horizontal, distance: 1 })
             .onActionUpdate((event: GestureEvent) => {
-              const delta = event.offsetX / this.containerWidth;
-              this.splitRatio += delta;
+              const moveDelta = event.offsetX - this.lastPanX;
+              this.lastPanX = event.offsetX;
+              this.splitRatio += moveDelta / this.containerWidth;
               this.splitRatio = Math.max(0.2, Math.min(0.8, this.splitRatio));
             })
+            .onActionEnd(() => {
+              this.lastPanX = 0;
+            })
         )
+        .onHover((isHover: boolean) => {
+          this.dividerHover = isHover;
+        })
 
       // 右：预览
       MarkdownPreview({

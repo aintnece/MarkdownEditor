@@ -381,6 +381,21 @@ document.addEventListener('click', function(e) {
     const hrColor = darkMode ? '#3a3a5c' : '#e1e4e8';
 
     return `
+/* KaTeX 字体加载（绝对路径，避免 data URI 中相对路径不解析） */
+@font-face { font-family: 'KaTeX_Main'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Main-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Main'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Main-Bold.woff2') format('woff2'); font-weight: bold; font-style: normal; }
+@font-face { font-family: 'KaTeX_Math'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Math-Italic.woff2') format('woff2'); font-weight: normal; font-style: italic; }
+@font-face { font-family: 'KaTeX_Size1'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Size1-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Size2'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Size2-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Size3'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Size3-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Size4'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Size4-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_AMS'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_AMS-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Caligraphic'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Caligraphic-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Fraktur'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Fraktur-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_SansSerif'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_SansSerif-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Script'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Script-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'KaTeX_Typewriter'; src: url('https://unpkg.com/katex@0.16.11/dist/fonts/KaTeX_Typewriter-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: ${fontSize}px; line-height: ${lineHeight}; color: ${fg}; background: ${bg}; padding: 16px; }
 .markdown-body { max-width: 100%; overflow-x: hidden; }
