@@ -3,7 +3,7 @@ import { MarkdownParser } from '../core/MarkdownParser';
 import { HtmlRenderer } from '../core/HtmlRenderer';
 import { ThemeColors } from '../services/ThemeService';
 
-const KATEX_PREFIX = 'https://unpkg.com/katex@0.16.11/';
+const KATEX_PREFIX = 'https://unpkg.com/katex@0.16.22/';
 
 @Component
 export struct MarkdownPreview {

@@ -1,31 +1,29 @@
-# Download KaTeX v0.16.11 files to rawfile directory
-$base = 'https://unpkg.com/katex@0.16.11'
+# Download KaTeX v0.16.22 (matching WebUI version) to rawfile directory
+$base = 'https://unpkg.com/katex@0.16.22'
 $out = 'entry/src/main/resources/rawfile/katex'
 
-Write-Host "Downloading KaTeX v0.16.11..." -ForegroundColor Green
+Write-Host "Downloading KaTeX v0.16.22 (WebUI version)..." -ForegroundColor Green
 
-# Create directories
 New-Item -ItemType Directory -Force -Path "$out/dist/fonts" | Out-Null
 New-Item -ItemType Directory -Force -Path "$out/dist/contrib" | Out-Null
 
-# Download CSS
+# CSS + JS
 Write-Host "  katex.min.css"
 Invoke-WebRequest -Uri "$base/dist/katex.min.css" -OutFile "$out/dist/katex.min.css"
-
-# Download JS
 Write-Host "  katex.min.js"
 Invoke-WebRequest -Uri "$base/dist/katex.min.js" -OutFile "$out/dist/katex.min.js"
-
-# Download auto-render
 Write-Host "  auto-render.min.js"
 Invoke-WebRequest -Uri "$base/dist/contrib/auto-render.min.js" -OutFile "$out/dist/contrib/auto-render.min.js"
 
-# Download fonts
+# Full font set (24 files - matching WebUI)
 $fonts = @(
-  'KaTeX_AMS-Regular', 'KaTeX_Caligraphic-Regular', 'KaTeX_Fraktur-Regular',
-  'KaTeX_Main-Bold', 'KaTeX_Main-Regular', 'KaTeX_Math-Italic',
-  'KaTeX_SansSerif-Regular', 'KaTeX_Script-Regular', 'KaTeX_Size1-Regular',
-  'KaTeX_Size2-Regular', 'KaTeX_Size3-Regular', 'KaTeX_Size4-Regular',
+  'KaTeX_AMS-Regular', 'KaTeX_Caligraphic-Bold', 'KaTeX_Caligraphic-Regular',
+  'KaTeX_Fraktur-Bold', 'KaTeX_Fraktur-Regular',
+  'KaTeX_Main-Bold', 'KaTeX_Main-BoldItalic', 'KaTeX_Main-Italic', 'KaTeX_Main-Regular',
+  'KaTeX_Math-BoldItalic', 'KaTeX_Math-Italic',
+  'KaTeX_SansSerif-Bold', 'KaTeX_SansSerif-Italic', 'KaTeX_SansSerif-Regular',
+  'KaTeX_Script-Regular', 'KaTeX_Size1-Regular', 'KaTeX_Size2-Regular',
+  'KaTeX_Size3-Regular', 'KaTeX_Size4-Regular',
   'KaTeX_Typewriter-Regular'
 )
 
@@ -35,5 +33,5 @@ foreach ($font in $fonts) {
 }
 
 Write-Host ""
-Write-Host "Done! Files downloaded to $out/" -ForegroundColor Green
-Write-Host "Now build and run in DevEco Studio."
+Write-Host "Done! KaTeX v0.16.22 downloaded to $out/" -ForegroundColor Green
+Write-Host "Now rebuild in DevEco Studio."
