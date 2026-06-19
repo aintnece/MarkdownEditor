@@ -21,6 +21,7 @@ export struct MarkdownPreview {
   private debounceTimer: number | null = null;
   private lastRendered: string = '';
   private currentHtml: string = '';
+  private bodyOnly: boolean = false;
 
   aboutToAppear(): void {
     this.controller = new webview.WebviewController();
@@ -109,10 +110,31 @@ export struct MarkdownPreview {
       const parser = new MarkdownParser(this.content);
       const ast = parser.parse();
       const renderer = new HtmlRenderer({ darkMode: this.isDark, fontSize: this.fontSize });
-      this.currentHtml = renderer.renderFullPage(ast);
+      const bodyHtml: string = renderer.renderBody(ast);
       this.lastRendered = this.content;
-      // 重新导航到 APP_URL，由 onInterceptRequest 响应新的 HTML
-      this.controller?.loadUrl(APP_URL + '?t=' + Date.now());
+
+      if (!this.bodyOnly) {
+        // 首次加载：生成完整页面，通过 loadUrl + 拦截器加载
+        this.currentHtml = renderer.renderFullPage(ast);
+        this.controller?.loadUrl(APP_URL + '?t=' + Date.now());
+        this.bodyOnly = true;
+      } else {
+        // 后续更新：用 runJavaScript 原地注入内容，保持滚动位置
+        const escaped: string = encodeURIComponent(bodyHtml);
+        this.controller?.runJavaScript(`
+          var article = document.querySelector('.markdown-body');
+          if (article) {
+            article.innerHTML = decodeURIComponent('${escaped}');
+            renderMathInElement(article, {
+              delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+              ],
+              throwOnError: false
+            });
+          }
+        `);
+      }
     } catch (err) {
       console.error('[MarkdownPreview] render error: ' + String(err));
       this.lastRendered = '';
