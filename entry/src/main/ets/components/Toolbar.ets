@@ -28,11 +28,81 @@ export struct Toolbar {
   @State hRedo: boolean = false;
   @State hExport: boolean = false;
 
+  // 防闪烁延迟
+  private tBold: number = -1;
+  private tItalic: number = -1;
+  private tStrike: number = -1;
+  private tInlineCode: number = -1;
+  private tHeading: number = -1;
+  private tBlockquote: number = -1;
+  private tUlist: number = -1;
+  private tOlist: number = -1;
+  private tCodeBlock: number = -1;
+  private tLink: number = -1;
+  private tImage: number = -1;
+  private tTable: number = -1;
+  private tHr: number = -1;
+  private tTask: number = -1;
+  private tEdit: number = -1;
+  private tSplit: number = -1;
+  private tPreview: number = -1;
+  private tUndo: number = -1;
+  private tRedo: number = -1;
+  private tExport: number = -1;
+
+  private getTimer(k: string): number {
+    if (k === 'bold') return this.tBold;
+    if (k === 'italic') return this.tItalic;
+    if (k === 'strikethrough') return this.tStrike;
+    if (k === 'inlineCode') return this.tInlineCode;
+    if (k === 'heading') return this.tHeading;
+    if (k === 'blockquote') return this.tBlockquote;
+    if (k === 'ulist') return this.tUlist;
+    if (k === 'olist') return this.tOlist;
+    if (k === 'codeBlock') return this.tCodeBlock;
+    if (k === 'link') return this.tLink;
+    if (k === 'image') return this.tImage;
+    if (k === 'table') return this.tTable;
+    if (k === 'hr') return this.tHr;
+    if (k === 'task') return this.tTask;
+    if (k === 'edit') return this.tEdit;
+    if (k === 'split') return this.tSplit;
+    if (k === 'preview') return this.tPreview;
+    if (k === 'undo') return this.tUndo;
+    if (k === 'redo') return this.tRedo;
+    if (k === 'export') return this.tExport;
+    return -1;
+  }
+
+  private setTimer(k: string, v: number): void {
+    if (k === 'bold') this.tBold = v;
+    else if (k === 'italic') this.tItalic = v;
+    else if (k === 'strikethrough') this.tStrike = v;
+    else if (k === 'inlineCode') this.tInlineCode = v;
+    else if (k === 'heading') this.tHeading = v;
+    else if (k === 'blockquote') this.tBlockquote = v;
+    else if (k === 'ulist') this.tUlist = v;
+    else if (k === 'olist') this.tOlist = v;
+    else if (k === 'codeBlock') this.tCodeBlock = v;
+    else if (k === 'link') this.tLink = v;
+    else if (k === 'image') this.tImage = v;
+    else if (k === 'table') this.tTable = v;
+    else if (k === 'hr') this.tHr = v;
+    else if (k === 'task') this.tTask = v;
+    else if (k === 'edit') this.tEdit = v;
+    else if (k === 'split') this.tSplit = v;
+    else if (k === 'preview') this.tPreview = v;
+    else if (k === 'undo') this.tUndo = v;
+    else if (k === 'redo') this.tRedo = v;
+    else if (k === 'export') this.tExport = v;
+  }
+
   // 延迟关闭（防闪烁）
-  private popTimers: Record<string, number> = {};
+  // private popTimers: Record<string, number> = {};
 
   private popShow(k: string): void {
-    if (this.popTimers[k] !== undefined) { clearTimeout(this.popTimers[k]); this.popTimers[k] = undefined; }
+    const t: number = this.getTimer(k);
+    if (t !== -1) { clearTimeout(t); this.setTimer(k, -1); }
     if (k === 'bold') this.hBold = true;
     else if (k === 'italic') this.hItalic = true;
     else if (k === 'strikethrough') this.hStrike = true;
@@ -56,7 +126,9 @@ export struct Toolbar {
   }
 
   private popHide(k: string): void {
-    this.popTimers[k] = setTimeout(() => {
+    const t: number = this.getTimer(k);
+    if (t !== -1) clearTimeout(t);
+    const id: number = setTimeout(() => {
       if (k === 'bold') this.hBold = false;
       else if (k === 'italic') this.hItalic = false;
       else if (k === 'strikethrough') this.hStrike = false;
@@ -78,6 +150,7 @@ export struct Toolbar {
       else if (k === 'redo') this.hRedo = false;
       else if (k === 'export') this.hExport = false;
     }, 200);
+    this.setTimer(k, id);
   }
 
   private tip(k: string): string {
