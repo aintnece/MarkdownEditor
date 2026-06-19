@@ -103,26 +103,26 @@ export struct Toolbar {
       Button({ type: ButtonType.Normal }) { Text('B').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('bold'); })
-      .bindPopup(this.hBold, { message: this.tip('bold'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('bold'); if (isHover) this.hBold = true; else { const t = setTimeout(() => { this.hBold = false; }, 200); this.tBold = t; } })
+      .bindPopup(this.hBold, { message: this.tip('bold'), placement: Placement.Top, showInSubWindow: true })
+      .onHover((isHover: boolean) => { this.clr('bold'); if (isHover) this.hBold = true; else { const t = setTimeout(() => { this.hBold = false; }, 400); this.tBold = t; } })
       // I
       Button({ type: ButtonType.Normal }) { Text('I').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('italic'); })
-      .bindPopup(this.hItalic, { message: this.tip('italic'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('italic'); if (isHover) this.hItalic = true; else { const t = setTimeout(() => { this.hItalic = false; }, 200); this.tItalic = t; } })
+      .bindPopup(this.hItalic, { message: this.tip('italic'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('italic'); if (isHover) this.hItalic = true; else { const t = setTimeout(() => { this.hItalic = false; }, 400); this.tItalic = t; } })
       // S
       Button({ type: ButtonType.Normal }) { Text('S').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('strikethrough'); })
-      .bindPopup(this.hStrike, { message: this.tip('strikethrough'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('strikethrough'); if (isHover) this.hStrike = true; else { const t = setTimeout(() => { this.hStrike = false; }, 200); this.tStrike = t; } })
+      .bindPopup(this.hStrike, { message: this.tip('strikethrough'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('strikethrough'); if (isHover) this.hStrike = true; else { const t = setTimeout(() => { this.hStrike = false; }, 400); this.tStrike = t; } })
       // <>
       Button({ type: ButtonType.Normal }) { Text('<>').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('inlineCode'); })
-      .bindPopup(this.hInlineCode, { message: this.tip('inlineCode'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('inlineCode'); if (isHover) this.hInlineCode = true; else { const t = setTimeout(() => { this.hInlineCode = false; }, 200); this.tInlineCode = t; } })
+      .bindPopup(this.hInlineCode, { message: this.tip('inlineCode'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('inlineCode'); if (isHover) this.hInlineCode = true; else { const t = setTimeout(() => { this.hInlineCode = false; }, 400); this.tInlineCode = t; } })
 
       Divider().vertical(true).height(20).width(1).color(this.themeColors.previewBorder).margin({ left: 4, right: 4 })
 
@@ -130,32 +130,32 @@ export struct Toolbar {
       Button({ type: ButtonType.Normal }) { Text('H').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('heading'); })
-      .bindPopup(this.hHeading, { message: this.tip('heading'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('heading'); if (isHover) this.hHeading = true; else { const t = setTimeout(() => { this.hHeading = false; }, 200); this.tHeading = t; } })
+      .bindPopup(this.hHeading, { message: this.tip('heading'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('heading'); if (isHover) this.hHeading = true; else { const t = setTimeout(() => { this.hHeading = false; }, 400); this.tHeading = t; } })
       // ❝
       Button({ type: ButtonType.Normal }) { Text('❝').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('blockquote'); })
-      .bindPopup(this.hBlockquote, { message: this.tip('blockquote'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('blockquote'); if (isHover) this.hBlockquote = true; else { const t = setTimeout(() => { this.hBlockquote = false; }, 200); this.tBlockquote = t; } })
+      .bindPopup(this.hBlockquote, { message: this.tip('blockquote'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('blockquote'); if (isHover) this.hBlockquote = true; else { const t = setTimeout(() => { this.hBlockquote = false; }, 400); this.tBlockquote = t; } })
       // •
       Button({ type: ButtonType.Normal }) { Text('•').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('ulist'); })
-      .bindPopup(this.hUlist, { message: this.tip('ulist'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('ulist'); if (isHover) this.hUlist = true; else { const t = setTimeout(() => { this.hUlist = false; }, 200); this.tUlist = t; } })
+      .bindPopup(this.hUlist, { message: this.tip('ulist'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('ulist'); if (isHover) this.hUlist = true; else { const t = setTimeout(() => { this.hUlist = false; }, 400); this.tUlist = t; } })
       // 1.
       Button({ type: ButtonType.Normal }) { Text('1.').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('olist'); })
-      .bindPopup(this.hOlist, { message: this.tip('olist'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('olist'); if (isHover) this.hOlist = true; else { const t = setTimeout(() => { this.hOlist = false; }, 200); this.tOlist = t; } })
+      .bindPopup(this.hOlist, { message: this.tip('olist'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('olist'); if (isHover) this.hOlist = true; else { const t = setTimeout(() => { this.hOlist = false; }, 400); this.tOlist = t; } })
       // { }
       Button({ type: ButtonType.Normal }) { Text('{ }').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('codeBlock'); })
-      .bindPopup(this.hCodeBlock, { message: this.tip('codeBlock'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('codeBlock'); if (isHover) this.hCodeBlock = true; else { const t = setTimeout(() => { this.hCodeBlock = false; }, 200); this.tCodeBlock = t; } })
+      .bindPopup(this.hCodeBlock, { message: this.tip('codeBlock'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('codeBlock'); if (isHover) this.hCodeBlock = true; else { const t = setTimeout(() => { this.hCodeBlock = false; }, 400); this.tCodeBlock = t; } })
 
       Divider().vertical(true).height(20).width(1).color(this.themeColors.previewBorder).margin({ left: 4, right: 4 })
 
@@ -163,32 +163,32 @@ export struct Toolbar {
       Button({ type: ButtonType.Normal }) { Text('🔗').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('link'); })
-      .bindPopup(this.hLink, { message: this.tip('link'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('link'); if (isHover) this.hLink = true; else { const t = setTimeout(() => { this.hLink = false; }, 200); this.tLink = t; } })
+      .bindPopup(this.hLink, { message: this.tip('link'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('link'); if (isHover) this.hLink = true; else { const t = setTimeout(() => { this.hLink = false; }, 400); this.tLink = t; } })
       // 🖼
       Button({ type: ButtonType.Normal }) { Text('🖼').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('image'); })
-      .bindPopup(this.hImage, { message: this.tip('image'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('image'); if (isHover) this.hImage = true; else { const t = setTimeout(() => { this.hImage = false; }, 200); this.tImage = t; } })
+      .bindPopup(this.hImage, { message: this.tip('image'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('image'); if (isHover) this.hImage = true; else { const t = setTimeout(() => { this.hImage = false; }, 400); this.tImage = t; } })
       // ⊞
       Button({ type: ButtonType.Normal }) { Text('⊞').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('table'); })
-      .bindPopup(this.hTable, { message: this.tip('table'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('table'); if (isHover) this.hTable = true; else { const t = setTimeout(() => { this.hTable = false; }, 200); this.tTable = t; } })
+      .bindPopup(this.hTable, { message: this.tip('table'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('table'); if (isHover) this.hTable = true; else { const t = setTimeout(() => { this.hTable = false; }, 400); this.tTable = t; } })
       // —
       Button({ type: ButtonType.Normal }) { Text('—').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('hr'); })
-      .bindPopup(this.hHr, { message: this.tip('hr'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('hr'); if (isHover) this.hHr = true; else { const t = setTimeout(() => { this.hHr = false; }, 200); this.tHr = t; } })
+      .bindPopup(this.hHr, { message: this.tip('hr'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('hr'); if (isHover) this.hHr = true; else { const t = setTimeout(() => { this.hHr = false; }, 400); this.tHr = t; } })
       // ☑
       Button({ type: ButtonType.Normal }) { Text('☑').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('task'); })
-      .bindPopup(this.hTask, { message: this.tip('task'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('task'); if (isHover) this.hTask = true; else { const t = setTimeout(() => { this.hTask = false; }, 200); this.tTask = t; } })
+      .bindPopup(this.hTask, { message: this.tip('task'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('task'); if (isHover) this.hTask = true; else { const t = setTimeout(() => { this.hTask = false; }, 400); this.tTask = t; } })
 
       Divider().vertical(true).height(20).width(1).color(this.themeColors.previewBorder).margin({ left: 4, right: 4 })
 
@@ -196,20 +196,20 @@ export struct Toolbar {
       Button({ type: ButtonType.Normal }) { Text('✏️').fontSize(14).fontColor(this.viewMode === ViewMode.Edit ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Edit ? 700 : 400) }
       .width(32).height(32).padding(0).backgroundColor(this.viewMode === ViewMode.Edit ? this.themeColors.toolbarHover : Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('edit'); })
-      .bindPopup(this.hEdit, { message: this.tip('edit'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('edit'); if (isHover) this.hEdit = true; else { const t = setTimeout(() => { this.hEdit = false; }, 200); this.tEdit = t; } })
+      .bindPopup(this.hEdit, { message: this.tip('edit'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('edit'); if (isHover) this.hEdit = true; else { const t = setTimeout(() => { this.hEdit = false; }, 400); this.tEdit = t; } })
       // ⇔
       Button({ type: ButtonType.Normal }) { Text('⇔').fontSize(14).fontColor(this.viewMode === ViewMode.Split ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Split ? 700 : 400) }
       .width(32).height(32).padding(0).backgroundColor(this.viewMode === ViewMode.Split ? this.themeColors.toolbarHover : Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('split'); })
-      .bindPopup(this.hSplit, { message: this.tip('split'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('split'); if (isHover) this.hSplit = true; else { const t = setTimeout(() => { this.hSplit = false; }, 200); this.tSplit = t; } })
+      .bindPopup(this.hSplit, { message: this.tip('split'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('split'); if (isHover) this.hSplit = true; else { const t = setTimeout(() => { this.hSplit = false; }, 400); this.tSplit = t; } })
       // 👁
       Button({ type: ButtonType.Normal }) { Text('👁').fontSize(14).fontColor(this.viewMode === ViewMode.Preview ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Preview ? 700 : 400) }
       .width(32).height(32).padding(0).backgroundColor(this.viewMode === ViewMode.Preview ? this.themeColors.toolbarHover : Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('preview'); })
-      .bindPopup(this.hPreview, { message: this.tip('preview'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('preview'); if (isHover) this.hPreview = true; else { const t = setTimeout(() => { this.hPreview = false; }, 200); this.tPreview = t; } })
+      .bindPopup(this.hPreview, { message: this.tip('preview'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('preview'); if (isHover) this.hPreview = true; else { const t = setTimeout(() => { this.hPreview = false; }, 400); this.tPreview = t; } })
 
       Blank()
 
@@ -217,21 +217,21 @@ export struct Toolbar {
       Button({ type: ButtonType.Normal }) { Text('↩').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('undo'); })
-      .bindPopup(this.hUndo, { message: this.tip('undo'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('undo'); if (isHover) this.hUndo = true; else { const t = setTimeout(() => { this.hUndo = false; }, 200); this.tUndo = t; } })
+      .bindPopup(this.hUndo, { message: this.tip('undo'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('undo'); if (isHover) this.hUndo = true; else { const t = setTimeout(() => { this.hUndo = false; }, 400); this.tUndo = t; } })
       // ↪
       Button({ type: ButtonType.Normal }) { Text('↪').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('redo'); })
-      .bindPopup(this.hRedo, { message: this.tip('redo'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('redo'); if (isHover) this.hRedo = true; else { const t = setTimeout(() => { this.hRedo = false; }, 200); this.tRedo = t; } })
+      .bindPopup(this.hRedo, { message: this.tip('redo'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('redo'); if (isHover) this.hRedo = true; else { const t = setTimeout(() => { this.hRedo = false; }, 400); this.tRedo = t; } })
       // 导出
       Button({ type: ButtonType.Normal }) { Text('导出').fontSize(12).fontColor(this.themeColors.toolbarFg) }
       .height(28).padding({ left: 10, right: 10 }).backgroundColor(this.themeColors.toolbarBg).borderRadius(4)
       .border({ width: 1, color: this.themeColors.previewBorder }).margin({ left: 4 })
       .onClick(() => { if (this.onExport) this.onExport(); })
-      .bindPopup(this.hExport, { message: this.tip('export'), showInSubWindow: true })
-      .onHover((isHover: boolean) => { this.clr('export'); if (isHover) this.hExport = true; else { const t = setTimeout(() => { this.hExport = false; }, 200); this.tExport = t; } })
+      .bindPopup(this.hExport, { message: this.tip('export'), showInSubWindow: true, placement: Placement.Top })
+      .onHover((isHover: boolean) => { this.clr('export'); if (isHover) this.hExport = true; else { const t = setTimeout(() => { this.hExport = false; }, 400); this.tExport = t; } })
     }
     .width('100%').height(44).padding({ left: 8, right: 8 })
     .backgroundColor(this.themeColors.toolbarBg)
