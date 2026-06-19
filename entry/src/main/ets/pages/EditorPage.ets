@@ -301,10 +301,63 @@ struct EditorPage {
   /** 加载测试文档（用于验证渲染效果） */
   /** 加载测试文档（用于验证渲染效果） */
   private loadTestDocument(): void {
-    this.vm.content = '# Markdown 编辑器测试文档\n\n## 文本样式\n\n**粗体**、*斜体*、~~删除线~~、`行内代码`\n\n## 列表\n\n- 无序列表项\n  - 嵌套列表项\n1. 有序列表项\n2. 有序列表项\n\n## 任务列表\n\n- [x] 已完成的任务\n- [ ] 未完成的任务\n\n## 代码块\n\n```typescript\nfunction greet(name: string): void {\n  console.log('Hello, ' + name + '!');\n}\n```\n\n## 数学公式\n\n行内公式：$E = mc^2$\n\n块级公式：\n$$\n\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)\n$$\n\n## 引用\n\n> 行到水穷处，坐看云起时。\n>\n> —— 王维\n\n## 表格\n\n| 功能 | 状态 | 备注 |\n|------|------|------|\n| 编辑 | ✅ | TextArea 组件 |\n| 预览 | ✅ | WebView + KaTeX |\n| 数学公式 | ✅ | KaTeX 渲染 |\n| 导出 | 🚧 | HTML 格式 |\n\n---\n\n> 测试完毕，可以自由编辑这个文档。\n';
+    this.vm.content =
+      '# Markdown 编辑器测试文档\n'
+      + '\n'
+      + '## 文本样式\n'
+      + '\n'
+      + '**粗体**、*斜体*、~~删除线~~、`行内代码`\n'
+      + '\n'
+      + '## 列表\n'
+      + '\n'
+      + '- 无序列表项\n'
+      + '  - 嵌套列表项\n'
+      + '1. 有序列表项\n'
+      + '2. 有序列表项\n'
+      + '\n'
+      + '## 任务列表\n'
+      + '\n'
+      + '- [x] 已完成的任务\n'
+      + '- [ ] 未完成的任务\n'
+      + '\n'
+      + '## 代码块\n'
+      + '\n'
+      + '```typescript\n'
+      + "function greet(name: string): void {\n"
+      + "  console.log('Hello, ' + name + '!');\n"
+      + "}\n"
+      + '```\n'
+      + '\n'
+      + '## 数学公式\n'
+      + '\n'
+      + '行内公式：$E = mc^2$\n'
+      + '\n'
+      + '块级公式：\n'
+      + '$$\n'
+      + '\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)\n'
+      + '$$\n'
+      + '\n'
+      + '## 引用\n'
+      + '\n'
+      + '> 行到水穷处，坐看云起时。\n'
+      + '>\n'
+      + '> —— 王维\n'
+      + '\n'
+      + '## 表格\n'
+      + '\n'
+      + '| 功能 | 状态 | 备注 |\n'
+      + '|------|------|------|\n'
+      + '| 编辑 | ✅ | TextArea 组件 |\n'
+      + '| 预览 | ✅ | WebView + KaTeX |\n'
+      + '| 数学公式 | ✅ | KaTeX 渲染 |\n'
+      + '| 导出 | 🚧 | HTML 格式 |\n'
+      + '\n'
+      + '---\n'
+      + '\n'
+      + '> 测试完毕，可以自由编辑这个文档。\n';
   }
 
-  }\n// ── 命令处理 ──
+// ── 命令处理 ──
 
   private handleCommand(command: string): void {
     const insertion = MarkdownCommands.execute(command, this.getSelection());
