@@ -170,7 +170,6 @@ class MarkdownCommands {
 
 // ─── EditorPage 组件 ───────────────────────────────
 
-@SuppressWarnings('deprecation')
 @Entry
 @Component
 struct EditorPage {

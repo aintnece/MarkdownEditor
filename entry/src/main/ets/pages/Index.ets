@@ -49,7 +49,6 @@ class HomeThemeBridge {
   }
 }
 
-@SuppressWarnings('deprecation')
 @Entry
 @Component
 struct Index {
