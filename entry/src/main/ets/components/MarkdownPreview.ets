@@ -66,12 +66,14 @@ export struct MarkdownPreview {
           resp.setResponseCode(200);
           resp.setReasonMessage('OK');
           try {
-            // 二进制文件（字体）用 resourceManager 读取 ArrayBuffer
-            const ctx = getContext();
-            const resMgr = ctx.resourceManager;
+            // 用组件级的 resourceManager 读取字体二进制数据
+            const ctx: resourceManager.ResourceManager = getContext(this).resourceManager;
             const rawPath: string = 'katex/' + path;
-            const data = resMgr.getRawFileContentSync(rawPath);
-            resp.setResponseData(data.buffer as ArrayBuffer);
+            const data: Uint8Array = ctx.getRawFileContentSync(rawPath);
+            // 创建精确字节拷贝的 ArrayBuffer
+            const copy: Uint8Array = new Uint8Array(data.byteLength);
+            copy.set(data);
+            resp.setResponseData(copy.buffer);
             resp.setResponseIsReady(true);
             return resp;
           } catch (e) {
