@@ -357,7 +357,7 @@ struct EditorPage {
       + '\n'
       + '块级公式：\n'
       + '$$\n'
-      + '\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)\n'
+      + '∫_{a}^{b} f(x) dx = F(b) - F(a)\n'
       + '$$\n'
       + '\n'
       + '## 引用\n'

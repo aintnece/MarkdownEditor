@@ -59,8 +59,6 @@ export class HtmlRenderer {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="preconnect" href="https://unpkg.com">
-<!-- KaTeX 数学公式渲染（CDN 不可用时回退到样式化的 raw text） -->
 <link rel="stylesheet" href="https://unpkg.com/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <style>
 ${this.getStyles()}
@@ -71,46 +69,9 @@ ${this.getStyles()}
 ${bodyContent}
 </article>
 <script>
-// 异步加载 KaTeX，不阻塞页面渲染
-(function() {
-  var loaded = false;
-  var tryRender = function() {
-    if (typeof renderMathInElement === 'function') {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '$', right: '$', display: false}
-        ],
-        throwOnError: false
-      });
-      loaded = true;
-    } else if (!loaded) {
-      setTimeout(tryRender, 200);
-    }
-  };
-  // 动态加载 KaTeX JS
-  var s1 = document.createElement('script');
-  s1.src = 'https://unpkg.com/katex@0.16.11/dist/katex.min.js';
-  s1.onload = function() {
-    var s2 = document.createElement('script');
-    s2.src = 'https://unpkg.com/katex@0.16.11/dist/contrib/auto-render.min.js';
-    s2.onload = tryRender;
-    document.head.appendChild(s2);
-  };
-  document.head.appendChild(s1);
-  // 5 秒超时：CDN 不可用时停止尝试，保留原始样式化的 LaTeX 文本
-  setTimeout(function() { loaded = true; }, 5000);
-})();
-
-// 任务列表点击回调
 document.addEventListener('click', function(e) {
   var checkbox = e.target.closest('input[type="checkbox"]');
-  if (checkbox) {
-    checkbox.disabled = false;
-    if (window.__markdownBridge) {
-      window.__markdownBridge.onTaskToggle(checkbox.dataset.index);
-    }
-  }
+  if (checkbox) checkbox.disabled = false;
 });
 </script>
 </body>
