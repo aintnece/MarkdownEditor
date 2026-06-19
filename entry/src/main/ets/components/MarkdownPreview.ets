@@ -65,7 +65,8 @@ export struct MarkdownPreview {
         fontSize: this.fontSize,
       });
       const html = renderer.renderFullPage(ast);
-      this.controller?.loadData(html, 'text/html', 'UTF-8', 'https://cdn.jsdelivr.net/npm/');
+      const encoded = encodeURIComponent(html);
+      this.controller?.loadUrl('data:text/html;charset=UTF-8,' + encoded);
     } catch (err) {
       console.error('[MarkdownPreview] render error: ' + JSON.stringify(err));
     }
