@@ -65,7 +65,7 @@ export struct MarkdownPreview {
       const html = renderer.renderFullPage(ast);
       const baseUrl = 'https://cdn.jsdelivr.net/npm/';
       this.controller?.loadData(html, 'text/html', 'UTF-8', baseUrl);
-    } catch (err: Error) {
+    } catch (err) {
       console.error('[MarkdownPreview] render error: ' + JSON.stringify(err));
     }
   }
