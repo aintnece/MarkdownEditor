@@ -167,31 +167,12 @@ document.addEventListener('click', function(e) {
     return `<span class="math-inline">${formula}</span>`;
   }
 
-  /** 基础 LaTeX 回退：^{} → ^(...), _{} → _(...), \, → 空格 */
+  /** 基础 LaTeX 回退：^{} → ^(...), _{} → _(...) */
   private fixMathFallback(text: string): string {
     let result: string = text;
-    // 替换 ^{...} 和 _{...}
-    result = this.replaceBraces(result, '^');
-    result = this.replaceBraces(result, '_');
-    return result;
-  }
-
-  /** 将 ^{...} 替换为 ^(...), _{...} 替换为 _(...) */
-  private replaceBraces(text: string, marker: string): string {
-    let result: string = text;
-    let i: number = 0;
-    while (i < result.length - 1) {
-      if (result[i] === marker && result[i + 1] === '{') {
-        const close: number = result.indexOf('}', i + 2);
-        if (close >= 0) {
-          const content: string = result.substring(i + 2, close);
-          result = result.substring(0, i) + marker + '(' + content + ')' + result.substring(close + 1);
-          i += content.length + 3;
-          continue;
-        }
-      }
-      i++;
-    }
+    result = result.split('^{').join('^(');
+    result = result.split('_{').join('_(');
+    result = result.split('}').join(')');
     return result;
   }
 
