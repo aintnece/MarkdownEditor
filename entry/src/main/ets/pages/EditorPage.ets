@@ -182,7 +182,7 @@ struct EditorPage {
 
   aboutToAppear(): void {
     // 初始化服务
-    const context = this.getUIContext().getApplicationContext();
+    const context = getContext(this);
     this.fileService = FileService.getInstance(context);
     this.exportService = new ExportService(context);
 

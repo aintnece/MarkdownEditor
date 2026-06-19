@@ -339,7 +339,7 @@ struct Index {
 
   private async openFile(): Promise<void> {
     try {
-      const context = this.getUIContext().getApplicationContext();
+      const context = getContext(this);
       const documentPicker = new picker.DocumentViewPicker(context);
       const uris: string[] = await documentPicker.select({
         fileSuffixFilters: ['.md', '.markdown', '.mdown', '.txt'],
