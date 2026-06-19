@@ -176,6 +176,8 @@ struct EditorPage {
   @State private vm: EditorViewModel = new EditorViewModel();
   @State private themeBridge: ThemeBridge = new ThemeBridge();
   @State private viewMode: ViewMode = ViewMode.Split;
+  @State private splitRatio: number = 0.55;
+  @State private containerWidth: number = 800;
 
   private fileService: FileService | null = null;
   private exportService: ExportService | null = null;
@@ -276,14 +278,21 @@ struct EditorPage {
           this.updateStats();
         },
       })
-      .layoutWeight(1)
+      .width(this.splitRatio * 100 + '%')
 
-      // 分割线
-      Divider()
-        .vertical(true)
-        .width(4)
+      // 可拖拽分割线
+      Column()
+        .width(6)
         .height('100%')
-        .color(this.themeBridge.previewBorder)
+        .backgroundColor(this.themeBridge.previewBorder)
+        .gesture(
+          PanGesture({ direction: PanDirection.Horizontal, distance: 1 })
+            .onActionUpdate((event: GestureEvent) => {
+              const delta = event.offsetX / this.containerWidth;
+              this.splitRatio += delta;
+              this.splitRatio = Math.max(0.2, Math.min(0.8, this.splitRatio));
+            })
+        )
 
       // 右：预览
       MarkdownPreview({
@@ -292,10 +301,15 @@ struct EditorPage {
         fontSize: this.vm.fontSize,
         isDark: this.vm.isDark,
       })
-      .layoutWeight(1)
+      .width((1 - this.splitRatio) * 100 + '%')
     }
     .width('100%')
     .height('100%')
+    .onAreaChange((_old: Area, newArea: Area) => {
+      if (newArea && newArea.width && newArea.width > 0) {
+        this.containerWidth = newArea.width;
+      }
+    })
   }
 
   /** 加载测试文档（用于验证渲染效果） */
