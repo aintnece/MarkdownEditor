@@ -401,7 +401,9 @@ strong { font-weight: 600; }
 em { font-style: italic; }
 del { text-decoration: line-through; }
 
-/* 数学公式（由 KaTeX 接管渲染） */
+/* 数学公式 */
+.math-block { display: block; width: 100%; text-align: center; margin: 16px 0; overflow-x: auto; }
+.math-inline { display: inline; }
 
 /* 响应式 */
 @media (max-width: 480px) {
