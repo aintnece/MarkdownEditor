@@ -62,9 +62,8 @@ export struct MarkdownPreview {
   /** 仅在内容变动时执行渲染 */
   private doRender(): void {
     if (this.content === this.lastRendered) {
-      return; // 内容没变，跳过（阻断 loadUrl → onPageEnd 循环）
+      return;
     }
-    this.lastRendered = this.content;
     try {
       const parser = new MarkdownParser(this.content);
       const ast = parser.parse();
@@ -74,9 +73,11 @@ export struct MarkdownPreview {
       });
       const html = renderer.renderFullPage(ast);
       const encoded = encodeURIComponent(html);
+      this.lastRendered = this.content;
       this.controller?.loadUrl('data:text/html;charset=UTF-8,' + encoded);
     } catch (err) {
-      console.error('[MarkdownPreview] render error: ' + JSON.stringify(err));
+      console.error('[MarkdownPreview] render error: ' + String(err));
+      this.lastRendered = '';
     }
   }
 }
