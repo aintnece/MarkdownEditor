@@ -1,8 +1,11 @@
-# Download KaTeX v0.16.22 (matching WebUI version) to rawfile directory
+# Download KaTeX v0.16.22 (matching WebUI) with ALL font formats
 $base = 'https://unpkg.com/katex@0.16.22'
 $out = 'entry/src/main/resources/rawfile/katex'
 
-Write-Host "Downloading KaTeX v0.16.22 (WebUI version)..." -ForegroundColor Green
+Write-Host "=== Downloading KaTeX v0.16.22 (all formats) ===" -ForegroundColor Green
+
+# Clean old files
+Remove-Item -Recurse -Force "$out/dist" -ErrorAction SilentlyContinue
 
 New-Item -ItemType Directory -Force -Path "$out/dist/fonts" | Out-Null
 New-Item -ItemType Directory -Force -Path "$out/dist/contrib" | Out-Null
@@ -15,7 +18,7 @@ Invoke-WebRequest -Uri "$base/dist/katex.min.js" -OutFile "$out/dist/katex.min.j
 Write-Host "  auto-render.min.js"
 Invoke-WebRequest -Uri "$base/dist/contrib/auto-render.min.js" -OutFile "$out/dist/contrib/auto-render.min.js"
 
-# Full font set (24 files - matching WebUI)
+# Font files - ALL 3 formats matching WebUI
 $fonts = @(
   'KaTeX_AMS-Regular', 'KaTeX_Caligraphic-Bold', 'KaTeX_Caligraphic-Regular',
   'KaTeX_Fraktur-Bold', 'KaTeX_Fraktur-Regular',
@@ -28,10 +31,15 @@ $fonts = @(
 )
 
 foreach ($font in $fonts) {
-  Write-Host "  $font.woff2"
-  Invoke-WebRequest -Uri "$base/dist/fonts/${font}.woff2" -OutFile "$out/dist/fonts/${font}.woff2"
+  foreach ($ext in @('woff2', 'woff', 'ttf')) {
+    Write-Host "  $font.$ext"
+    try {
+      Invoke-WebRequest -Uri "$base/dist/fonts/${font}.${ext}" -OutFile "$out/dist/fonts/${font}.${ext}"
+    } catch {
+      Write-Host "    WARN: $font.$ext skipped (not found)" -ForegroundColor Yellow
+    }
+  }
 }
 
 Write-Host ""
-Write-Host "Done! KaTeX v0.16.22 downloaded to $out/" -ForegroundColor Green
-Write-Host "Now rebuild in DevEco Studio."
+Write-Host "=== Done! Clean Build in DevEco Studio ===" -ForegroundColor Green
