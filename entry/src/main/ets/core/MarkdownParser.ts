@@ -54,7 +54,15 @@ export class MarkdownParser {
 
   constructor(input: string, config?: Partial<ParserConfig>) {
     this.input = input;
-    this.config = { ...DefaultConfig, ...config };
+    // ArkTS 不支持对象展开（arkts-no-spread），用默认值+覆盖
+    this.config = DefaultConfig;
+    if (config) {
+      if (config.enableTables !== undefined) this.config.enableTables = config.enableTables;
+      if (config.enableTaskLists !== undefined) this.config.enableTaskLists = config.enableTaskLists;
+      if (config.enableStrikethrough !== undefined) this.config.enableStrikethrough = config.enableStrikethrough;
+      if (config.enableAutoLinks !== undefined) this.config.enableAutoLinks = config.enableAutoLinks;
+      if (config.enableMath !== undefined) this.config.enableMath = config.enableMath;
+    }
     this.tokenizer = new Tokenizer(input);
     this.tokens = this.tokenizer.tokenize();
   }

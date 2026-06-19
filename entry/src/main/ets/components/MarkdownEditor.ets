@@ -16,7 +16,7 @@ import { ThemeColors } from '../services/ThemeService';
 @Component
 export struct MarkdownEditor {
   // ── 组件属性 ──
-  @Prop @Watch('onContentChange') content: string;
+  @Prop content: string;
   @Prop themeColors: ThemeColors;
   @Prop fontSize: number;
 
@@ -59,9 +59,8 @@ export struct MarkdownEditor {
         .borderRadius(0)
         .borderWidth(0)
         .onChange((value: string) => {
-          this.content = value;
-          this.updateLineCount();
           if (this.onChange) this.onChange(value);
+          this.updateLineCount();
         })
         .onTouch((event: TouchEvent) => {
           if (event.type === TouchType.Down) {
@@ -176,10 +175,6 @@ export struct MarkdownEditor {
   }
 
   // ── 内部方法 ──
-
-  private onContentChange(): void {
-    this.updateLineCount();
-  }
 
   private updateLineCount(): void {
     this.lineCount = this.content.split('\n').length;
