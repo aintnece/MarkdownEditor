@@ -68,6 +68,20 @@ ${this.getStyles()}
 ${bodyContent}
 </article>
 <script>
+// 数学公式上下标回退
+(function() {
+  var els = document.querySelectorAll('.math-inline, .math-block');
+  for (var i = 0; i < els.length; i++) {
+    els[i].innerHTML = els[i].innerHTML
+      .replace(/\^\{([^}]*)\}/g, '<sup>$1</sup>')
+      .replace(/\_\{(.*?)\}/g, '<sub>$1</sub>')
+      .replace(/\^([a-zA-Z0-9])/g, '<sup>$1</sup>')
+      .replace(/\_([a-zA-Z0-9])/g, '<sub>$1</sub>')
+      .replace(/\\\\,|\\\\;|\\\\:/g, ' ')
+      .replace(/\\\\!/g, '');
+  }
+})();
+
 document.addEventListener('click', function(e) {
   var checkbox = e.target.closest('input[type="checkbox"]');
   if (checkbox) checkbox.disabled = false;
@@ -399,9 +413,9 @@ strong { font-weight: 600; }
 em { font-style: italic; }
 del { text-decoration: line-through; }
 
-/* 数学公式（KaTeX 渲染成功时被完全替换，此处为 CDN 不可用时的回退样式） */
-.math-block { text-align: center; margin: 16px 0; overflow-x: auto; padding: 8px 0; font-family: 'Times New Roman', 'Latin Modern Math', serif; font-size: 1.2em; font-style: italic; background: ${darkMode ? '#252545' : '#f8f9fa'}; border-radius: 4px; color: ${fg}; }
-.math-inline { display: inline-block; vertical-align: middle; padding: 0 3px; font-family: 'Times New Roman', 'Latin Modern Math', serif; font-style: italic; color: ${fg}; }
+/* 数学公式 */
+.math-block { text-align: center; margin: 16px 0; overflow-x: auto; padding: 8px 0; font-family: 'Times New Roman', 'Latin Modern Math', serif; font-size: 1.2em; font-style: italic; }
+.math-inline { font-family: 'Times New Roman', 'Latin Modern Math', serif; font-style: italic; padding: 0 2px; }
 
 /* 响应式 */
 @media (max-width: 480px) {
