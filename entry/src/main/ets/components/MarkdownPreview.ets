@@ -1,14 +1,9 @@
-/**
- * MarkdownPreview 组件
- *
- * 基于 WebView 的 Markdown 实时预览组件。
- * 使用 loadUrl(data URI) + 防抖，避免无限循环和卡顿。
- */
-
 import { webview } from '@kit.ArkWeb';
 import { MarkdownParser } from '../core/MarkdownParser';
 import { HtmlRenderer } from '../core/HtmlRenderer';
 import { ThemeColors } from '../services/ThemeService';
+
+const KATEX_PREFIX = 'https://unpkg.com/katex@0.16.11/';
 
 @Component
 export struct MarkdownPreview {
@@ -22,21 +17,15 @@ export struct MarkdownPreview {
   private controller: webview.WebviewController | null = null;
   private isReady: boolean = false;
   private debounceTimer: number | null = null;
-  // 缓存上次渲染的内容，防止 loadUrl → onPageEnd 循环
   private lastRendered: string = '';
 
   aboutToAppear(): void {
     this.controller = new webview.WebviewController();
   }
 
-  /** 防抖处理：停止输入 300ms 后才渲染 */
   onContentChange(): void {
-    if (!this.isReady) {
-      return;
-    }
-    if (this.debounceTimer !== null) {
-      clearTimeout(this.debounceTimer);
-    }
+    if (!this.isReady) return;
+    if (this.debounceTimer !== null) clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => {
       this.debounceTimer = null;
       this.doRender();
@@ -51,29 +40,51 @@ export struct MarkdownPreview {
       .javaScriptAccess(true)
       .domStorageAccess(true)
       .focusable(false)
+      .onInterceptRequest((event: WebResourceRequest) => {
+        const url: string = event.request.getRequestUrl();
+        // 拦截 KaTeX CDN 请求，返回本地 rawfile 中的资源
+        if (url.startsWith(KATEX_PREFIX)) {
+          const path: string = url.substring(KATEX_PREFIX.length);
+          const mimeType: string = this.getMimeType(path);
+          const resp = new WebResourceResponse();
+          resp.setResponseEncoding('utf-8');
+          resp.setResponseMimeType(mimeType);
+          resp.setResponseCode(200);
+          resp.setReasonMessage('OK');
+          try {
+            resp.setResponseData($rawfile('katex/' + path));
+            resp.setResponseIsReady(true);
+            return resp;
+          } catch (e) {
+            console.error('Rawfile not found: katex/' + path);
+          }
+        }
+        return null;
+      })
       .onPageEnd(() => {
         if (!this.isReady) {
           this.isReady = true;
-          if (this.content !== '' && this.content !== this.lastRendered) {
-            this.doRender();
-          }
+          if (this.content !== '' && this.content !== this.lastRendered) this.doRender();
         }
         if (this.onRendered) this.onRendered();
       })
   }
 
-  /** 仅在内容变动时执行渲染 */
+  private getMimeType(path: string): string {
+    if (path.endsWith('.css')) return 'text/css';
+    if (path.endsWith('.js')) return 'text/javascript';
+    if (path.endsWith('.woff2')) return 'application/font-woff2';
+    if (path.endsWith('.woff')) return 'application/font-woff';
+    if (path.endsWith('.ttf')) return 'application/font-ttf';
+    return 'text/html';
+  }
+
   private doRender(): void {
-    if (this.content === this.lastRendered) {
-      return;
-    }
+    if (this.content === this.lastRendered) return;
     try {
       const parser = new MarkdownParser(this.content);
       const ast = parser.parse();
-      const renderer = new HtmlRenderer({
-        darkMode: this.isDark,
-        fontSize: this.fontSize,
-      });
+      const renderer = new HtmlRenderer({ darkMode: this.isDark, fontSize: this.fontSize });
       const html = renderer.renderFullPage(ast);
       const encoded = encodeURIComponent(html);
       this.lastRendered = this.content;

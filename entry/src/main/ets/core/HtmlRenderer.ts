@@ -59,9 +59,13 @@ export class HtmlRenderer {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/katex@0.16.11/dist/katex.min.css">
 <style>
 ${this.getStyles()}
 </style>
+<script defer src="https://unpkg.com/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://unpkg.com/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false })"></script>
 </head>
 <body class="${this.config.darkMode ? 'dark' : 'light'}">
 <article class="markdown-body">
@@ -69,8 +73,8 @@ ${bodyContent}
 </article>
 <script>
 document.addEventListener('click', function(e) {
-  var checkbox = e.target.closest('input[type="checkbox"]');
-  if (checkbox) checkbox.disabled = false;
+  var cb = e.target.closest('input[type="checkbox"]');
+  if (cb) cb.disabled = false;
 });
 </script>
 </body>
@@ -158,22 +162,13 @@ document.addEventListener('click', function(e) {
   }
 
   private renderMathBlock(node: MathBlockNode): string {
-    const formula = this.fixMathFallback(this.escapeHtml(node.formula));
-    return `<div class="math-block">${formula}</div>`;
+    const formula = this.escapeHtml(node.formula);
+    return `<div class="math-block">$$${formula}$$</div>`;
   }
 
   private renderMathInline(node: MathInlineNode): string {
-    const formula = this.fixMathFallback(this.escapeHtml(node.formula));
-    return `<span class="math-inline">${formula}</span>`;
-  }
-
-  /** 基础 LaTeX 回退：^{} → ^(...), _{} → _(...) */
-  private fixMathFallback(text: string): string {
-    let result: string = text;
-    result = result.split('^{').join('^(');
-    result = result.split('_{').join('_(');
-    result = result.split('}').join(')');
-    return result;
+    const formula = this.escapeHtml(node.formula);
+    return `<span class="math-inline">$${formula}$</span>`;
   }
 
   private renderTable(node: TableNode): string {
