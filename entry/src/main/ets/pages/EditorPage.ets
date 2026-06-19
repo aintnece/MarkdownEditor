@@ -267,7 +267,7 @@ struct EditorPage {
   @Builder
   buildSplitView() {
     Row() {
-      // 左：编辑器
+      // 左：编辑器（像素宽度 = 总宽 × 比例 - 半分隔线）
       MarkdownEditor({
         content: this.vm.content,
         themeColors: this.themeBridge,
@@ -278,7 +278,7 @@ struct EditorPage {
           this.updateStats();
         },
       })
-      .width(this.splitRatio * 100 + '%')
+      .width(this.containerWidth * this.splitRatio - 3)
 
       // 可拖拽分割线
       Column()
@@ -301,13 +301,13 @@ struct EditorPage {
         fontSize: this.vm.fontSize,
         isDark: this.vm.isDark,
       })
-      .width((1 - this.splitRatio) * 100 + '%')
+      .width(this.containerWidth * (1 - this.splitRatio) - 3)
     }
     .width('100%')
     .height('100%')
     .onAreaChange((_old: Area, newArea: Area) => {
       if (newArea && newArea.width && newArea.width > 0) {
-        this.containerWidth = newArea.width;
+        this.containerWidth = Number(newArea.width);
       }
     })
   }
