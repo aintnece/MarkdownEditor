@@ -59,7 +59,6 @@ export class HtmlRenderer {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<base href="https://unpkg.com/katex@0.16.11/dist/">
 <link rel="preconnect" href="https://unpkg.com">
 <!-- KaTeX 数学公式渲染（CDN 不可用时回退到样式化的 raw text） -->
 <link rel="stylesheet" href="https://unpkg.com/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
