@@ -364,7 +364,7 @@ function greet(name: string): void {
 块级公式：
 
 $$
-\int_{a}^{b} f(x)\,dx = F(b) - F(a)
+\\int_{a}^{b} f(x) dx = F(b) - F(a)
 $$
 
 ## 引用

@@ -75,9 +75,9 @@ export struct MarkdownPreview {
   private getMimeType(path: string): string {
     if (path.endsWith('.css')) return 'text/css';
     if (path.endsWith('.js')) return 'text/javascript';
-    if (path.endsWith('.woff2')) return 'application/font-woff2';
-    if (path.endsWith('.woff')) return 'application/font-woff';
-    if (path.endsWith('.ttf')) return 'application/font-ttf';
+    if (path.endsWith('.woff2')) return 'font/woff2';
+    if (path.endsWith('.woff')) return 'font/woff';
+    if (path.endsWith('.ttf')) return 'font/ttf';
     return 'text/html';
   }
 
