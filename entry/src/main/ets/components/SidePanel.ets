@@ -19,12 +19,6 @@ export struct SidePanel {
   @State private recentFiles: RecentFileItem[] = [];
   @State private expanded: boolean = true;
 
-  // 气泡状态
-  @State private hTabFiles: boolean = false;
-  @State private hTabOutline: boolean = false;
-  @State private hTabRecent: boolean = false;
-  @State private hToggle: boolean = false;
-
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
 
@@ -34,7 +28,7 @@ export struct SidePanel {
 
   build() {
     Row() {
-      // 标签栏（始终显示，按钮内联 — bindPopup 不响应 @Builder 参数）
+      // 标签栏（始终显示）
       Column() {
         // 📁 文件浏览
         Button({ type: ButtonType.Normal }) {
@@ -43,8 +37,6 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: true })
-        .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
         .onClick(() => { this.activeTab = PanelTab.Files; })
 
         // 📑 文档大纲
@@ -54,8 +46,6 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: true })
-        .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
         .onClick(() => { this.activeTab = PanelTab.Outline; })
 
         // 🕐 最近文件
@@ -65,8 +55,6 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: true })
-        .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
         .onClick(() => { this.activeTab = PanelTab.Recent; })
 
         Blank()
@@ -78,8 +66,6 @@ export struct SidePanel {
           }
           .width(28).height(28)
           .backgroundColor(Color.Transparent).borderRadius(4)
-          .bindPopup(this.hToggle, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { this.hToggle = isHover; })
           .onClick(() => { this.expanded = false; })
         } else {
           Button({ type: ButtonType.Normal }) {
@@ -87,8 +73,6 @@ export struct SidePanel {
           }
           .width(28).height(28)
           .backgroundColor(Color.Transparent).borderRadius(4)
-          .bindPopup(this.hToggle, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { this.hToggle = isHover; })
           .onClick(() => { this.expanded = true; })
         }
       }
