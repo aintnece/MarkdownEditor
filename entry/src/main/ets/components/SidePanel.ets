@@ -11,8 +11,7 @@ import { ThemeColors } from '../services/ThemeService';
 
 @Component
 export struct SidePanel {
-  // ── 组件属性 ──
-  @Link themeColors: ThemeColors;
+  @Prop themeColors: ThemeColors;
 
   @State private activeTab: PanelTab = PanelTab.Files;
   @State private fileList: FileItem[] = [];
@@ -24,8 +23,7 @@ export struct SidePanel {
   @State private hTabFiles: boolean = false;
   @State private hTabOutline: boolean = false;
   @State private hTabRecent: boolean = false;
-  @State private hCollapse: boolean = false;
-  @State private hExpand: boolean = false;
+  @State private hToggle: boolean = false;
 
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
@@ -35,107 +33,72 @@ export struct SidePanel {
   }
 
   build() {
-    if (!this.expanded) {
-      // 收起状态：只显示标签图标（内联 bindPopup）
+    Row() {
+      // 标签栏（始终显示，按钮内联 — bindPopup 不响应 @Builder 参数）
       Column() {
         // 📁 文件浏览
         Button({ type: ButtonType.Normal }) {
-          Text('📁').fontSize(16)
+          Text('📁').fontSize(16).opacity(this.activeTab === PanelTab.Files ? 1.0 : 0.6)
         }
         .width(28).height(28).padding(0)
-        .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
+        .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 4 })
         .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: true })
         .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
+        .onClick(() => { this.activeTab = PanelTab.Files; })
 
         // 📑 文档大纲
         Button({ type: ButtonType.Normal }) {
-          Text('📑').fontSize(16)
+          Text('📑').fontSize(16).opacity(this.activeTab === PanelTab.Outline ? 1.0 : 0.6)
         }
         .width(28).height(28).padding(0)
-        .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
+        .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 4 })
         .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: true })
         .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
+        .onClick(() => { this.activeTab = PanelTab.Outline; })
 
         // 🕐 最近文件
         Button({ type: ButtonType.Normal }) {
-          Text('🕐').fontSize(16)
+          Text('🕐').fontSize(16).opacity(this.activeTab === PanelTab.Recent ? 1.0 : 0.6)
         }
         .width(28).height(28).padding(0)
-        .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
+        .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 4 })
         .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: true })
         .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
+        .onClick(() => { this.activeTab = PanelTab.Recent; })
 
         Blank()
 
-        // ▶ 展开侧栏
-        Button({ type: ButtonType.Normal }) {
-          Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
-        }
-        .width(28).height(28)
-        .backgroundColor(Color.Transparent).borderRadius(4)
-        .bindPopup(this.hExpand, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: true })
-        .onHover((isHover: boolean) => { this.hExpand = isHover; })
-        .onClick(() => { this.expanded = true; })
-      }
-      .width(32)
-      .height('100%')
-      .backgroundColor(this.themeColors.sidebarBg)
-      .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
-    } else {
-      Row() {
-        // 标签栏（按钮直接内联 — bindPopup 不响应 @Builder 参数）
-        Column() {
-          // 📁 文件浏览
-          Button({ type: ButtonType.Normal }) {
-            Text('📁').fontSize(16).opacity(this.activeTab === PanelTab.Files ? 1.0 : 0.6)
-          }
-          .width(28).height(28).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 4 })
-          .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
-          .onClick(() => { this.activeTab = PanelTab.Files; })
-
-          // 📑 文档大纲
-          Button({ type: ButtonType.Normal }) {
-            Text('📑').fontSize(16).opacity(this.activeTab === PanelTab.Outline ? 1.0 : 0.6)
-          }
-          .width(28).height(28).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 4 })
-          .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
-          .onClick(() => { this.activeTab = PanelTab.Outline; })
-
-          // 🕐 最近文件
-          Button({ type: ButtonType.Normal }) {
-            Text('🕐').fontSize(16).opacity(this.activeTab === PanelTab.Recent ? 1.0 : 0.6)
-          }
-          .width(28).height(28).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 4 })
-          .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
-          .onClick(() => { this.activeTab = PanelTab.Recent; })
-
-          Blank()
-
-          // ◀ 收起侧栏
+        // 展开/收起按钮
+        if (this.expanded) {
           Button({ type: ButtonType.Normal }) {
             Text('◀').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
           .width(28).height(28)
           .backgroundColor(Color.Transparent).borderRadius(4)
-          .bindPopup(this.hCollapse, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { this.hCollapse = isHover; })
+          .bindPopup(this.hToggle, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { this.hToggle = isHover; })
           .onClick(() => { this.expanded = false; })
+        } else {
+          Button({ type: ButtonType.Normal }) {
+            Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
+          }
+          .width(28).height(28)
+          .backgroundColor(Color.Transparent).borderRadius(4)
+          .bindPopup(this.hToggle, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { this.hToggle = isHover; })
+          .onClick(() => { this.expanded = true; })
         }
-        .width(32)
-        .height('100%')
-        .backgroundColor(this.themeColors.sidebarBg)
-        .padding({ top: 4 })
+      }
+      .width(32)
+      .height('100%')
+      .backgroundColor(this.themeColors.sidebarBg)
+      .padding({ top: 4 })
 
-        // 内容区域
+      // 内容区域（仅展开时显示）
+      if (this.expanded) {
         Column() {
           Text(this.getTabTitle())
             .fontSize(13)
@@ -156,10 +119,10 @@ export struct SidePanel {
         .height('100%')
         .backgroundColor(this.themeColors.sidebarBg)
       }
-      .width(220)
-      .height('100%')
-      .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
     }
+    .width(this.expanded ? 220 : 32)
+    .height('100%')
+    .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
   }
 
   @Builder
