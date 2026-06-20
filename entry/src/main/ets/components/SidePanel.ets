@@ -18,6 +18,7 @@ export struct SidePanel {
 
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
+  onToggle?: () => void;
 
   aboutToAppear(): void {
     this.loadSampleOutline();
@@ -57,6 +58,15 @@ export struct SidePanel {
         .onClick(() => { this.activeTab = PanelTab.Recent; })
 
         Blank()
+
+        // 折叠按钮（VS Code Activity Bar 风格）
+        Button({ type: ButtonType.Normal }) {
+          Text(this.expanded ? '◀' : '▶')
+            .fontSize(12).fontColor(this.themeColors.sidebarFg)
+        }
+        .width(36).height(36).backgroundColor(Color.Transparent).borderRadius(4)
+        .margin({ bottom: 8 })
+        .onClick(() => { if (this.onToggle) this.onToggle(); })
       }
       .width(44).height('100%')
       .backgroundColor(this.themeColors.sidebarBg).padding({ top: 6 })
