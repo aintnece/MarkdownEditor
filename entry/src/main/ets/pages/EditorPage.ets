@@ -510,8 +510,6 @@ $$
         const renderer: HtmlRenderer = new HtmlRenderer({ darkMode: false, fontSize: 14 });
         const html: string = renderer.renderFullPage(ast);
         await this.exportService?.saveHTML(html);
-      } else if (format === ExportFormat.PDF) {
-        if (this.previewController) ExportService.printOrSavePdf(this.previewController);
       } else if (format === ExportFormat.PRINT) {
         if (this.previewController) ExportService.printOrSavePdf(this.previewController);
       }

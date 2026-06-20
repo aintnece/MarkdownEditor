@@ -4,7 +4,7 @@ import { common } from '@kit.AbilityKit';
 import { webview } from '@kit.ArkWeb';
 
 export enum ExportFormat {
-  MD = 'md', HTML = 'html', PDF = 'pdf', PRINT = 'print',
+  MD = 'md', HTML = 'html', PRINT = 'print',
 }
 
 export class ExportService {

@@ -1,7 +1,7 @@
 /**
  * 导出选择弹窗
  *
- * 提供 MD / HTML / PDF / 打印 四种导出方式
+ * 提供 MD 保存 / HTML 保存 / 打印（含另存为 PDF）
  * 渲染在全屏 Stack 中作为 overlay
  */
 
@@ -23,10 +23,9 @@ export struct ExportSheet {
             .width('100%').padding({ left: 16, top: 16, bottom: 8 })
             .fontColor('#1a1a2e')
 
-          this.item('📄', 'Markdown (.md)', ExportFormat.MD)
-          this.item('🌐', 'HTML 网页 (.html)', ExportFormat.HTML)
-          this.item('📑', 'PDF 文档 (.pdf)', ExportFormat.PDF)
-          this.item('🖨️', '直接打印', ExportFormat.PRINT)
+          this.item('📄', '保存 Markdown (.md)', ExportFormat.MD)
+          this.item('🌐', '保存网页 (.html)', ExportFormat.HTML)
+          this.item('🖨️', '打印 / 另存为 PDF', ExportFormat.PRINT)
 
           Divider().width('100%').margin({ top: 8 })
           Button('取消')
@@ -63,5 +62,5 @@ export struct ExportSheet {
 }
 
 export enum ExportFormat {
-  MD = 'md', HTML = 'html', PDF = 'pdf', PRINT = 'print',
+  MD = 'md', HTML = 'html', PRINT = 'print',
 }
