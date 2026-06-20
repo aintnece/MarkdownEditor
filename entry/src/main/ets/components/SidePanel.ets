@@ -35,11 +35,35 @@ export struct SidePanel {
 
   build() {
     if (!this.expanded) {
-      // 收起状态：只显示标签图标
+      // 收起状态：只显示标签图标（内联 bindPopup）
       Column() {
-        this.buildTabIcon(PanelTab.Files, '📁')
-        this.buildTabIcon(PanelTab.Outline, '📑')
-        this.buildTabIcon(PanelTab.Recent, '🕐')
+        // 📁 文件浏览
+        Button({ type: ButtonType.Normal }) {
+          Text('📁').fontSize(16)
+        }
+        .width(28).height(28).padding(0)
+        .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
+        .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: true })
+        .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
+
+        // 📑 文档大纲
+        Button({ type: ButtonType.Normal }) {
+          Text('📑').fontSize(16)
+        }
+        .width(28).height(28).padding(0)
+        .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
+        .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: true })
+        .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
+
+        // 🕐 最近文件
+        Button({ type: ButtonType.Normal }) {
+          Text('🕐').fontSize(16)
+        }
+        .width(28).height(28).padding(0)
+        .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
+        .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: true })
+        .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
+
         Blank()
       }
       .width(32)
@@ -126,16 +150,6 @@ export struct SidePanel {
       .height('100%')
       .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
     }
-  }
-
-  @Builder
-  buildTabIcon(tab: PanelTab, icon: string) {
-    Button({ type: ButtonType.Normal }) {
-      Text(icon).fontSize(16)
-    }
-    .width(28).height(28).padding(0)
-    .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
-    .onClick(() => { this.activeTab = tab; })
   }
 
   @Builder
