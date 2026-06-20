@@ -20,6 +20,12 @@ export struct SidePanel {
   @State private recentFiles: RecentFileItem[] = [];
   @State private expanded: boolean = true;
 
+  // 气泡状态
+  @State private hTabFiles: boolean = false;
+  @State private hTabOutline: boolean = false;
+  @State private hTabRecent: boolean = false;
+  @State private hCollapse: boolean = false;
+
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
 
@@ -40,30 +46,55 @@ export struct SidePanel {
       .height('100%')
       .backgroundColor(this.themeColors.sidebarBg)
       .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
-      .onClick(() => {
-        this.expanded = true;
-      })
+      .onClick(() => { this.expanded = true; })
     } else {
       Row() {
-        // 标签栏
+        // 标签栏（按钮直接内联 — bindPopup 不响应 @Builder 参数）
         Column() {
-          this.buildTabIcon(PanelTab.Files, '📁', this.activeTab === PanelTab.Files)
-          this.buildTabIcon(PanelTab.Outline, '📑', this.activeTab === PanelTab.Outline)
-          this.buildTabIcon(PanelTab.Recent, '🕐', this.activeTab === PanelTab.Recent)
-          Blank()
-          // 收起按钮
+          // 📁 文件浏览
           Button({ type: ButtonType.Normal }) {
-            Text('◀')
-              .fontSize(12)
-              .fontColor(this.themeColors.sidebarFg)
+            Text('📁').fontSize(16).opacity(this.activeTab === PanelTab.Files ? 1.0 : 0.6)
           }
-          .width(28)
-          .height(28)
-          .backgroundColor(Color.Transparent)
-          .borderRadius(4)
-          .onClick(() => {
-            this.expanded = false;
-          })
+          .width(28).height(28).padding(0)
+          .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
+          .borderRadius(4).margin({ top: 4 })
+          .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
+          .onClick(() => { this.activeTab = PanelTab.Files; })
+
+          // 📑 文档大纲
+          Button({ type: ButtonType.Normal }) {
+            Text('📑').fontSize(16).opacity(this.activeTab === PanelTab.Outline ? 1.0 : 0.6)
+          }
+          .width(28).height(28).padding(0)
+          .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
+          .borderRadius(4).margin({ top: 4 })
+          .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
+          .onClick(() => { this.activeTab = PanelTab.Outline; })
+
+          // 🕐 最近文件
+          Button({ type: ButtonType.Normal }) {
+            Text('🕐').fontSize(16).opacity(this.activeTab === PanelTab.Recent ? 1.0 : 0.6)
+          }
+          .width(28).height(28).padding(0)
+          .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
+          .borderRadius(4).margin({ top: 4 })
+          .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
+          .onClick(() => { this.activeTab = PanelTab.Recent; })
+
+          Blank()
+
+          // ◀ 收起侧栏
+          Button({ type: ButtonType.Normal }) {
+            Text('◀').fontSize(12).fontColor(this.themeColors.sidebarFg)
+          }
+          .width(28).height(28)
+          .backgroundColor(Color.Transparent).borderRadius(4)
+          .bindPopup(this.hCollapse, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { this.hCollapse = isHover; })
+          .onClick(() => { this.expanded = false; })
         }
         .width(32)
         .height('100%')
@@ -98,21 +129,13 @@ export struct SidePanel {
   }
 
   @Builder
-  buildTabIcon(tab: PanelTab, icon: string, active: boolean = false) {
+  buildTabIcon(tab: PanelTab, icon: string) {
     Button({ type: ButtonType.Normal }) {
-      Text(icon)
-        .fontSize(16)
-        .opacity(active ? 1.0 : 0.6)
+      Text(icon).fontSize(16)
     }
-    .width(28)
-    .height(28)
-    .padding(0)
-    .backgroundColor(active ? this.themeColors.sidebarActive : Color.Transparent)
-    .borderRadius(4)
-    .margin({ top: 4 })
-    .onClick(() => {
-      this.activeTab = tab;
-    })
+    .width(28).height(28).padding(0)
+    .backgroundColor(Color.Transparent).borderRadius(4).margin({ top: 4 })
+    .onClick(() => { this.activeTab = tab; })
   }
 
   @Builder
@@ -121,26 +144,18 @@ export struct SidePanel {
       Column() {
         ForEach(this.fileList, (item: FileItem) => {
           Row() {
-            Text('📄')
-              .fontSize(14)
-              .margin({ right: 6 })
-            Text(item.name)
-              .fontSize(13)
-              .fontColor(this.themeColors.sidebarFg)
+            Text('📄').fontSize(14).margin({ right: 6 })
+            Text(item.name).fontSize(13).fontColor(this.themeColors.sidebarFg)
           }
           .width('100%')
           .padding({ left: 12, top: 6, bottom: 6, right: 8 })
           .borderRadius(4)
-          .onClick(() => {
-            if (this.onFileSelect) this.onFileSelect(item.path);
-          })
+          .onClick(() => { if (this.onFileSelect) this.onFileSelect(item.path); })
         }, (item: FileItem) => item.path)
       }
-      .width('100%')
-      .padding(4)
+      .width('100%').padding(4)
     }
-    .width('100%')
-    .layoutWeight(1)
+    .width('100%').layoutWeight(1)
   }
 
   @Builder
@@ -153,23 +168,14 @@ export struct SidePanel {
             .fontWeight(item.level === 1 ? 600 : 400)
             .fontColor(this.themeColors.sidebarFg)
             .width('100%')
-            .padding({
-              left: 12 + (item.level - 1) * 16,
-              top: 4,
-              bottom: 4,
-              right: 8,
-            })
+            .padding({ left: 12 + (item.level - 1) * 16, top: 4, bottom: 4, right: 8 })
             .borderRadius(4)
-            .onClick(() => {
-              if (this.onHeadingSelect) this.onHeadingSelect(item.id);
-            })
+            .onClick(() => { if (this.onHeadingSelect) this.onHeadingSelect(item.id); })
         }, (item: OutlineItem) => item.id)
       }
-      .width('100%')
-      .padding(4)
+      .width('100%').padding(4)
     }
-    .width('100%')
-    .layoutWeight(1)
+    .width('100%').layoutWeight(1)
   }
 
   @Builder
@@ -178,50 +184,29 @@ export struct SidePanel {
       Column() {
         ForEach(this.recentFiles, (item: RecentFileItem) => {
           Row() {
-            Text('📄')
-              .fontSize(14)
-              .margin({ right: 6 })
+            Text('📄').fontSize(14).margin({ right: 6 })
             Column() {
-              Text(item.name)
-                .fontSize(13)
-                .fontColor(this.themeColors.sidebarFg)
-              Text(item.timeAgo)
-                .fontSize(11)
-                .fontColor(this.themeColors.editorLineNumber)
+              Text(item.name).fontSize(13).fontColor(this.themeColors.sidebarFg)
+              Text(item.timeAgo).fontSize(11).fontColor(this.themeColors.editorLineNumber)
             }
             .layoutWeight(1)
           }
           .width('100%')
           .padding({ left: 12, top: 6, bottom: 6, right: 8 })
           .borderRadius(4)
-          .onClick(() => {
-            if (this.onFileSelect) this.onFileSelect(item.path);
-          })
+          .onClick(() => { if (this.onFileSelect) this.onFileSelect(item.path); })
         }, (item: RecentFileItem) => item.path)
       }
-      .width('100%')
-      .padding(4)
+      .width('100%').padding(4)
     }
-    .width('100%')
-    .layoutWeight(1)
+    .width('100%').layoutWeight(1)
   }
 
   // ── 公共方法 ──
 
-  /** 更新文件列表 */
-  updateFiles(files: FileItem[]): void {
-    this.fileList = files;
-  }
-
-  /** 更新大纲（由编辑器内容变化触发） */
-  updateOutline(headings: OutlineItem[]): void {
-    this.outlineItems = headings;
-  }
-
-  /** 更新最近文件 */
-  updateRecent(files: RecentFileItem[]): void {
-    this.recentFiles = files;
-  }
+  updateFiles(files: FileItem[]): void { this.fileList = files; }
+  updateOutline(headings: OutlineItem[]): void { this.outlineItems = headings; }
+  updateRecent(files: RecentFileItem[]): void { this.recentFiles = files; }
 
   // ── 内部方法 ──
 
@@ -233,9 +218,7 @@ export struct SidePanel {
     }
   }
 
-  private loadSampleOutline(): void {
-    // 大纲会在编辑器中动态更新
-  }
+  private loadSampleOutline(): void {}
 }
 
 // ─── 类型定义 ─────────────────────────────────────
