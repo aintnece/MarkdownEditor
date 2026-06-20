@@ -1,9 +1,7 @@
 import { picker } from '@kit.CoreFileKit';
 import { fileIo } from '@kit.CoreFileKit';
 import { common } from '@kit.AbilityKit';
-import { BusinessError } from '@kit.BasicServicesKit';
 import { webview } from '@kit.ArkWeb';
-import { print } from '@kit.BasicServicesKit';
 
 export enum ExportFormat {
   MD = 'md', HTML = 'html', PDF = 'pdf', PRINT = 'print',
@@ -48,39 +46,12 @@ export class ExportService {
     }
   }
 
-  /** 导出 PDF（通过 WebView 打印 API 生成） */
-  exportPdf(webCtrl: webview.WebviewController): void {
+  /** PDF / 打印：调用 WebView 原生 window.print()，用户可选择打印机或"保存为 PDF" */
+  static printOrSavePdf(webCtrl: webview.WebviewController): void {
     try {
-      const adapter = webCtrl.createWebPrintDocumentAdapter('markdown_export.pdf');
-      const attrs: print.PrintAttributes = {
-        copyNumber: 1,
-        pageRange: { startPage: 0, endPage: 0, pages: [] },
-        pageSize: print.PrintPageType.PAGE_ISO_A4,
-        directionMode: print.PrintDirectionMode.DIRECTION_MODE_AUTO,
-        colorMode: print.PrintColorMode.COLOR_MODE_COLOR,
-        duplexMode: print.PrintDuplexMode.DUPLEX_MODE_NONE,
-      };
-      print.print('markdown_export', adapter, attrs, this.context);
+      webCtrl.runJavaScript('window.print();');
     } catch (err) {
-      console.error('exportPdf failed: ' + String(err));
-    }
-  }
-
-  /** 直接打印 */
-  printPage(webCtrl: webview.WebviewController): void {
-    try {
-      const adapter = webCtrl.createWebPrintDocumentAdapter('markdown_print.pdf');
-      const attrs: print.PrintAttributes = {
-        copyNumber: 1,
-        pageRange: { startPage: 0, endPage: 0, pages: [] },
-        pageSize: print.PrintPageType.PAGE_ISO_A4,
-        directionMode: print.PrintDirectionMode.DIRECTION_MODE_AUTO,
-        colorMode: print.PrintColorMode.COLOR_MODE_COLOR,
-        duplexMode: print.PrintDuplexMode.DUPLEX_MODE_NONE,
-      };
-      print.print('markdown_print', adapter, attrs, this.context);
-    } catch (err) {
-      console.error('printPage failed: ' + String(err));
+      console.error('printOrSavePdf failed: ' + String(err));
     }
   }
 

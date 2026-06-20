@@ -511,9 +511,9 @@ $$
         const html: string = renderer.renderFullPage(ast);
         await this.exportService?.saveHTML(html);
       } else if (format === ExportFormat.PDF) {
-        if (this.previewController) this.exportService?.exportPdf(this.previewController);
+        if (this.previewController) ExportService.printOrSavePdf(this.previewController);
       } else if (format === ExportFormat.PRINT) {
-        if (this.previewController) this.exportService?.printPage(this.previewController);
+        if (this.previewController) ExportService.printOrSavePdf(this.previewController);
       }
     } catch (err) {
       console.error('[EditorPage] Export failed: ' + String(err));
