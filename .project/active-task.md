@@ -18,5 +18,5 @@ bindPopup 的 `showInSubWindow:true` 创建系统子窗口，热区覆盖全屏 
 ## Checkpoint
 
 **Status**: `awaiting_verification`
-**Completed at**: 46442c0
-**Verification required**: 单击展开/收起正常，tooltip 在按钮右侧弹出
+**Completed at**: 60071ae
+**Verification required**: 快速点击直接生效，悬停 500ms 后气泡出现，子窗口不拦截点击
