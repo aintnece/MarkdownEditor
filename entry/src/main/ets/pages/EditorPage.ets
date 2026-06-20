@@ -283,6 +283,7 @@ struct EditorPage {
       themeColors: this.themeBridge,
       fontSize: this.vm.fontSize,
       isDark: this.vm.isDark,
+      onControllerReady: (ctrl: webview.WebviewController) => { this.previewController = ctrl; },
     })
   }
 
@@ -329,6 +330,7 @@ struct EditorPage {
         themeColors: this.themeBridge,
         fontSize: this.vm.fontSize,
         isDark: this.vm.isDark,
+        onControllerReady: (ctrl: webview.WebviewController) => { this.previewController = ctrl; },
         onRendered: () => {
           // WebView 加载完成后把焦点还给编辑器
           setTimeout(() => {

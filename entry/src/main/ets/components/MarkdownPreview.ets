@@ -15,6 +15,7 @@ export struct MarkdownPreview {
   @Prop isDark: boolean;
 
   onRendered?: () => void;
+  onControllerReady?: (ctrl: webview.WebviewController) => void;
 
   private controller: webview.WebviewController | null = null;
   private isReady: boolean = false;
@@ -25,6 +26,7 @@ export struct MarkdownPreview {
 
   aboutToAppear(): void {
     this.controller = new webview.WebviewController();
+    if (this.onControllerReady) this.onControllerReady(this.controller);
   }
 
   onContentChange(): void {
