@@ -81,7 +81,6 @@ export struct SidePanel {
       .height('100%')
       .backgroundColor(this.themeColors.sidebarBg)
       .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
-      .onClick(() => { this.expanded = true; })
     } else {
       Row() {
         // 标签栏（按钮直接内联 — bindPopup 不响应 @Builder 参数）
