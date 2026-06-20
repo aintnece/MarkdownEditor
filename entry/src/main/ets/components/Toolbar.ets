@@ -24,6 +24,7 @@ export struct Toolbar {
   @State hEdit: boolean = false;
   @State hSplit: boolean = false;
   @State hPreview: boolean = false;
+  @State hWysiwyg: boolean = false;
   @State hUndo: boolean = false;
   @State hRedo: boolean = false;
   @State hExport: boolean = false;
@@ -34,7 +35,7 @@ export struct Toolbar {
   private tUlist: number = 0; private tOlist: number = 0; private tCodeBlock: number = 0;
   private tLink: number = 0; private tImage: number = 0; private tTable: number = 0;
   private tHr: number = 0; private tTask: number = 0; private tEdit: number = 0;
-  private tSplit: number = 0; private tPreview: number = 0; private tUndo: number = 0;
+  private tSplit: number = 0; private tPreview: number = 0; private tWysiwyg: number = 0; private tUndo: number = 0;
   private tRedo: number = 0; private tExport: number = 0;
 
   private clrAll(k: string): void {
@@ -56,6 +57,7 @@ export struct Toolbar {
     else if (k === 'edit') t = this.tEdit;
     else if (k === 'split') t = this.tSplit;
     else if (k === 'preview') t = this.tPreview;
+    else if (k === 'wysiwyg') t = this.tWysiwyg;
     else if (k === 'undo') t = this.tUndo;
     else if (k === 'redo') t = this.tRedo;
     else if (k === 'export') t = this.tExport;
@@ -80,6 +82,7 @@ export struct Toolbar {
     else if (k === 'edit') this.tEdit = v;
     else if (k === 'split') this.tSplit = v;
     else if (k === 'preview') this.tPreview = v;
+    else if (k === 'wysiwyg') this.tWysiwyg = v;
     else if (k === 'undo') this.tUndo = v;
     else if (k === 'redo') this.tRedo = v;
     else if (k === 'export') this.tExport = v;
@@ -114,7 +117,8 @@ export struct Toolbar {
     else if (k === 'edit') this.hEdit = v;
     else if (k === 'split') this.hSplit = v;
     else if (k === 'preview') this.hPreview = v;
-    else if (k === 'undo') this.hUndo = v;
+ else if (k === 'wysiwyg') this.hWysiwyg = v;
+ else if (k === 'undo') this.hUndo = v;
     else if (k === 'redo') this.hRedo = v;
     else if (k === 'export') this.hExport = v;
   }
@@ -137,6 +141,7 @@ export struct Toolbar {
     if (k === 'edit') return '编辑';
     if (k === 'split') return '分屏';
     if (k === 'preview') return '预览';
+    if (k === 'wysiwyg') return '所见即所得';
     if (k === 'undo') return '撤销';
     if (k === 'redo') return '重做';
     if (k === 'export') return '导出文档';
@@ -256,6 +261,12 @@ export struct Toolbar {
       .onClick(() => { if (this.onCommand) this.onCommand('preview'); })
       .bindPopup(this.hPreview, { message: this.tip('preview'), placement: Placement.Top, showInSubWindow: true })
       .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('preview'); else this.hoverLeave('preview'); })
+      // ≡ 所见即所得
+      Button({ type: ButtonType.Normal }) { Text('≡').fontSize(14).fontColor(this.viewMode === ViewMode.Wysiwyg ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Wysiwyg ? 700 : 400) }
+      .width(32).height(32).padding(0).backgroundColor(this.viewMode === ViewMode.Wysiwyg ? this.themeColors.toolbarHover : Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
+      .onClick(() => { if (this.onCommand) this.onCommand('wysiwyg'); })
+      .bindPopup(this.hWysiwyg, { message: this.tip('wysiwyg'), placement: Placement.Top, showInSubWindow: true })
+      .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('wysiwyg'); else this.hoverLeave('wysiwyg'); })
 
       Blank()
 
@@ -286,5 +297,5 @@ export struct Toolbar {
 }
 
 export enum ViewMode {
-  Edit = 'edit', Split = 'split', Preview = 'preview',
+  Edit = 'edit', Split = 'split', Preview = 'preview', Wysiwyg = 'wysiwyg',
 }

@@ -18,6 +18,7 @@ import { webview } from '@kit.ArkWeb';
 
 import { MarkdownEditor } from '../components/MarkdownEditor';
 import { MarkdownPreview } from '../components/MarkdownPreview';
+import { WysiwygEditor } from '../components/WysiwygEditor';
 import { Toolbar, ViewMode } from '../components/Toolbar';
 import { SidePanel } from '../components/SidePanel';
 import { StatusBar } from '../components/StatusBar';
@@ -191,6 +192,7 @@ struct EditorPage {
   private fileService: FileService | null = null;
   private exportService: ExportService | null = null;
   private previewController: webview.WebviewController | null = null;
+  private wysiwygRef?: WysiwygEditor;
   @State showExportSheet: boolean = false;
 
   aboutToAppear(): void {
@@ -238,6 +240,8 @@ struct EditorPage {
             this.buildEditorOnly()
           } else if (this.viewMode === ViewMode.Preview) {
             this.buildPreviewOnly()
+          } else if (this.viewMode === ViewMode.Wysiwyg) {
+            this.buildWysiwygOnly()
           } else {
             this.buildSplitView()
           }
@@ -287,6 +291,23 @@ struct EditorPage {
       fontSize: this.vm.fontSize,
       isDark: this.vm.isDark,
       onControllerReady: (ctrl: webview.WebviewController) => { this.previewController = ctrl; },
+    })
+  }
+
+  @Builder
+  buildWysiwygOnly() {
+    WysiwygEditor({
+      content: this.vm.content,
+      isDark: this.vm.isDark,
+      fontSize: this.vm.fontSize,
+      onReady: () => {
+        // WYSIWYG editor initialized
+      },
+      onMarkdownChange: (md: string) => {
+        this.vm.content = md;
+        this.vm.isSaved = false;
+        this.updateStats();
+      },
     })
   }
 
@@ -437,6 +458,8 @@ $$
       this.viewMode = ViewMode.Split;
     } else if (command === ViewMode.Preview) {
       this.viewMode = ViewMode.Preview;
+    } else if (command === ViewMode.Wysiwyg) {
+      this.viewMode = ViewMode.Wysiwyg;
     }
 
     // 其他命令
