@@ -2,21 +2,21 @@
 
 ## Objective
 
-无活跃阻塞任务。侧栏 popup 已通过 `showInSubWindow:false` 修复，等待用户验证。
+修复 SidePanel 气泡问题：鼠标悬停图标时**无气泡出现**，且**有阴影闪烁**。
 
 ## Context
 
-bindPopup 的 `showInSubWindow:true` 创建系统子窗口，热区覆盖全屏 → 拦截侧栏所有按钮点击。
-`showInSubWindow:false` 在同一窗口内渲染 popup → 热区仅气泡本身 → 不冲突。
+- 按钮使用bindPopup(placement:Top, showInSubWindow:false)，36x36，间距10px
+- Toolbar 用相同bindPopup配置正常工作
+- 怀疑根因可能是：侧栏Column裁剪、hover事件冲突、或bindPopup在子窗口内的行为差异
 
-## Progress
+## Steps for Claude Code
 
-- [x] 确认根因：popup 子窗口热区拦截点击
-- [x] 修复：showInSubWindow:false + Placement.Right
-- [ ] 用户验证：pull → Build → 测试单击 + 气泡
+1. 完整阅读 SidePanel.ets 和 Toolbar.ets，对比两者的 bindPopup 实现差异
+2. 阅读 bindPopup悬浮提示.md 踩坑记录
+3. 找出根因，实施修复
+4. 验证修改后bindPopup与Toolbar行为一致
 
 ## Checkpoint
 
-**Status**: `awaiting_verification`
-**Completed at**: 60071ae
-**Verification required**: 快速点击直接生效，悬停 500ms 后气泡出现，子窗口不拦截点击
+**Status**: `in_progress`
