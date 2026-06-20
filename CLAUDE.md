@@ -10,6 +10,12 @@ ArkTS + ArkUI project for HarmonyOS NEXT (API 12). DevEco Studio 5.0+.
 - **Decisions**: `/workspace/MarkdownEditor/.project/decisions/` — design rationale
 
 Before starting any task, read active-task.md and relevant Obsidian 踩坑记录.
+After completing work:
+1. Update .project/status.md — mark completed items with `[x]`
+2. If design decisions were made, write a note to .project/decisions/YYYY-MM-DD-title.md
+3. Write a brief episode note: date, what was done, rationale
+4. Update active-task.md if work continues
+5. Commit with conventional format: `type: Chinese description`
 
 ## Project Structure
 
