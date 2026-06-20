@@ -45,7 +45,7 @@ export struct SidePanel {
         .width(36).height(36).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 10 })
-        .bindPopup(this.hFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: false })
+        .bindPopup(this.hFiles, { message: '文件浏览', placement: Placement.Top, showInSubWindow: false })
         .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('files'); else this.hoverLeave('files'); })
         .onClick(() => { this.activeTab = PanelTab.Files; })
 
@@ -56,7 +56,7 @@ export struct SidePanel {
         .width(36).height(36).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 10 })
-        .bindPopup(this.hOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: false })
+        .bindPopup(this.hOutline, { message: '文档大纲', placement: Placement.Top, showInSubWindow: false })
         .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('outline'); else this.hoverLeave('outline'); })
         .onClick(() => { this.activeTab = PanelTab.Outline; })
 
@@ -67,7 +67,7 @@ export struct SidePanel {
         .width(36).height(36).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 10 })
-        .bindPopup(this.hRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: false })
+        .bindPopup(this.hRecent, { message: '最近文件', placement: Placement.Top, showInSubWindow: false })
         .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('recent'); else this.hoverLeave('recent'); })
         .onClick(() => { this.activeTab = PanelTab.Recent; })
 
