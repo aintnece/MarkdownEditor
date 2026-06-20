@@ -4,7 +4,7 @@ import { ThemeColors } from '../services/ThemeService';
  * SidePanel 组件
  *
  * 侧面板，提供：文件浏览 / 文档大纲 / 最近文件
- * 气泡用 showInSubWindow:false（不创建系统子窗口，不拦截点击）
+ * 气泡用 showInSubWindow:true + 500ms hover 延迟（与 Toolbar 一致）
  */
 
 @Component
@@ -22,11 +22,48 @@ export struct SidePanel {
   @State private hTabRecent: boolean = false;
   @State private hToggle: boolean = false;
 
+  // Hover timers (Toolbar pattern: 500ms delay, subwindow popup)
+  private tTabFiles: number = 0;
+  private tTabOutline: number = 0;
+  private tTabRecent: number = 0;
+  private tToggle: number = 0;
+
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
 
   aboutToAppear(): void {
     this.loadSampleOutline();
+  }
+
+  private hoverEnter(k: string): void {
+    this.clearTimer(k);
+    const id: number = setTimeout(() => { this.setPop(k, true); }, 500);
+    this.setTimer(k, id);
+  }
+  private hoverLeave(k: string): void {
+    this.clearTimer(k);
+    this.setPop(k, false);
+  }
+  private clearTimer(k: string): void {
+    let t: number = 0;
+    if (k === 'tabFiles') t = this.tTabFiles;
+    else if (k === 'tabOutline') t = this.tTabOutline;
+    else if (k === 'tabRecent') t = this.tTabRecent;
+    else if (k === 'toggle') t = this.tToggle;
+    if (t !== 0) { clearTimeout(t); }
+    this.setTimer(k, 0);
+  }
+  private setTimer(k: string, v: number): void {
+    if (k === 'tabFiles') this.tTabFiles = v;
+    else if (k === 'tabOutline') this.tTabOutline = v;
+    else if (k === 'tabRecent') this.tTabRecent = v;
+    else if (k === 'toggle') this.tToggle = v;
+  }
+  private setPop(k: string, v: boolean): void {
+    if (k === 'tabFiles') this.hTabFiles = v;
+    else if (k === 'tabOutline') this.hTabOutline = v;
+    else if (k === 'tabRecent') this.hTabRecent = v;
+    else if (k === 'toggle') this.hToggle = v;
   }
 
   build() {
@@ -39,8 +76,8 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: false })
-        .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
+        .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: true })
+        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('tabFiles'); else this.hoverLeave('tabFiles'); })
         .onClick(() => { this.activeTab = PanelTab.Files; })
 
         // 📑 文档大纲
@@ -50,8 +87,8 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: false })
-        .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
+        .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: true })
+        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('tabOutline'); else this.hoverLeave('tabOutline'); })
         .onClick(() => { this.activeTab = PanelTab.Outline; })
 
         // 🕐 最近文件
@@ -61,8 +98,8 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: false })
-        .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
+        .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: true })
+        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('tabRecent'); else this.hoverLeave('tabRecent'); })
         .onClick(() => { this.activeTab = PanelTab.Recent; })
 
         Blank()
@@ -73,16 +110,16 @@ export struct SidePanel {
             Text('◀').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
           .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-          .bindPopup(this.hToggle, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: false })
-          .onHover((isHover: boolean) => { this.hToggle = isHover; })
+          .bindPopup(this.hToggle, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('toggle'); else this.hoverLeave('toggle'); })
           .onClick(() => { this.expanded = false; })
         } else {
           Button({ type: ButtonType.Normal }) {
             Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
           .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-          .bindPopup(this.hToggle, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: false })
-          .onHover((isHover: boolean) => { this.hToggle = isHover; })
+          .bindPopup(this.hToggle, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: true })
+          .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('toggle'); else this.hoverLeave('toggle'); })
           .onClick(() => { this.expanded = true; })
         }
       }

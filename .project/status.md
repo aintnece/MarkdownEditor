@@ -30,12 +30,9 @@
 
 ## In Progress
 
-- [ ] 侧栏按钮提示恢复（bindPopup 子窗口冲突 → 需要替代方案）
 - [ ] 编译告警清理（弃用 API — 优先级低，API 12 无可用替代品）
 
 ## Known Issues
-
-- **侧栏 bindPopup 冲突**：`showInSubWindow:true` 子窗口热区拦截侧栏按钮点击，已临时去掉。需换实现方式
 - **打印/PDF 在模拟器不完全**：`window.print()` 后台成功但 UI 无法完成保存（模拟器限制），真机应正常
 - **编译 0 error，16 WARNs**：弃用 API（pushUrl, getContext, getParams），API 12 无可用替代品
 
