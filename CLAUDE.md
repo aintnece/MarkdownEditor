@@ -2,6 +2,15 @@
 
 ArkTS + ArkUI project for HarmonyOS NEXT (API 12). DevEco Studio 5.0+.
 
+## Knowledge Base & Project Tracking
+
+- **Obsidian vault**: `/workspace/obsidian-vault/鸿蒙开发/` — API refs, guides, 踩坑记录
+- **Project state**: `/workspace/MarkdownEditor/.project/status.md` — current completion
+- **Active task**: `/workspace/MarkdownEditor/.project/active-task.md` — what to work on next
+- **Decisions**: `/workspace/MarkdownEditor/.project/decisions/` — design rationale
+
+Before starting any task, read active-task.md and relevant Obsidian 踩坑记录.
+
 ## Project Structure
 
 ```
