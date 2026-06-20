@@ -50,6 +50,13 @@
           "abilities": ["MainAbility"],
           "when": "inuse"
         }
+      },
+      {
+        "name": "ohos.permission.PRINT",
+        "usedScene": {
+          "abilities": ["MainAbility"],
+          "when": "inuse"
+        }
       }
     ]
   }

@@ -24,6 +24,7 @@ import { StatusBar } from '../components/StatusBar';
 import { ThemeService, ThemeColors } from '../services/ThemeService';
 import { FileService } from '../services/FileService';
 import { ExportService } from '../services/ExportService';
+import { ExportSheet, ExportFormat } from '../components/ExportSheet';
 
 // ── 视图模型 ──
 
@@ -183,6 +184,8 @@ struct EditorPage {
 
   private fileService: FileService | null = null;
   private exportService: ExportService | null = null;
+  private previewController: webview.WebviewController | null = null;
+  @State showExportSheet: boolean = false;
 
   aboutToAppear(): void {
     // 初始化服务
@@ -240,6 +243,12 @@ struct EditorPage {
     .width('100%')
     .height('100%')
     .backgroundColor(this.themeBridge.editorBg)
+
+    // 导出弹窗
+    ExportSheet({ visible: this.showExportSheet, themeColors: this.themeBridge,
+      onSelect: (fmt: ExportFormat) => this.doExport(fmt),
+      onClose: () => { this.showExportSheet = false; }
+    })
   }
 
   @Builder
@@ -472,18 +481,29 @@ $$
 
   // ── 导出 ──
 
-  private async handleExport(): Promise<void> {
+  private handleExport(): void {
+    this.showExportSheet = true;
+  }
+
+  private async doExport(format: ExportFormat): Promise<void> {
+    this.showExportSheet = false;
     try {
-      const result = await this.exportService?.export(this.vm.content, {
-        format: 'html',
-        darkMode: this.vm.isDark,
-        fontSize: this.vm.fontSize,
-      });
-      if (result) {
-        console.log('[EditorPage] Export saved to:', result);
+      if (format === ExportFormat.MD) {
+        await this.exportService?.saveMD(this.vm.content);
+      } else if (format === ExportFormat.HTML) {
+        // 生成 HTML
+        const parser = new MarkdownParser(this.vm.content);
+        const ast = parser.parse();
+        const renderer = new HtmlRenderer({ darkMode: false, fontSize: 14 });
+        const html = renderer.renderFullPage(ast);
+        await this.exportService?.saveHTML(html);
+      } else if (format === ExportFormat.PDF) {
+        if (this.previewController) this.exportService?.exportPdf(this.previewController);
+      } else if (format === ExportFormat.PRINT) {
+        if (this.previewController) this.exportService?.printPage(this.previewController);
       }
     } catch (err) {
-      console.error('[EditorPage] Export failed:', JSON.stringify(err));
+      console.error('[EditorPage] Export failed: ' + String(err));
     }
   }
 
