@@ -2,26 +2,24 @@
 
 ## Objective
 
-无活跃阻塞任务。等待用户决定下一步方向。
+修复侧栏展开/收起双重点击问题（部分完成），继续 UI 打磨。
 
 ## Context
 
-导出功能（MD/HTML/PDF/Print）编译错误已修复（bc37e4d），12 errors → 0 errors。
-剩余 17 WARNs 均为弃用 API（pushUrl, getContext, getParams）和 API 版本兼容提示，不影响编译和运行。
+侧栏 expand/collapse 按钮首次单击有效，之后需要双击才能生效。
+日志显示 bindPopup 气泡频繁创建/销毁子窗口（id:106），热区可能拦截了按钮点击。
 
 ## Progress
 
-- [x] 修复 12 个导出功能编译错误
-  - 缺失 import（webview, MarkdownParser, HtmlRenderer, DocumentNode）
-  - build() 双根节点（Stack 包裹）
-  - 显式类型标注（避免 arkts-no-any-unknown）
-  - print.print() 参数类型 string → string[]
-  - fileIo.openSync 返回值类型 File → 移除 :number 标注
-- [ ] 用户验证：pull → DevEco Studio 编译确认 0 error
-- [ ] 决定下一步方向
+- [x] 排查根因确认：`bindPopup(showInSubWindow:true)` 创建的 popup 子窗口热区拦截侧栏按钮点击 → 去掉侧栏全部 bindPopup 后单击正常
+- [ ] 为侧栏按钮恢复提示功能（需要不冲突的实现方式）
+  - 方案A：用文本 tooltip（不用 popup 子窗口）
+  - 方案B：延迟 popup 显示（500ms）避免干扰点击
+  - 方案C：用底部统一 tooltip 栏
+- [ ] 侧栏内容区功能补齐（文件浏览、大纲实时更新）
 
 ## Checkpoint
 
-**Status**: `done`
-**Completed at**: bc37e4d (2026-06-20)
-**Verification required**: 用户 pull → Build → 确认 0 error
+**Status**: `in_progress`
+**Blocked by**: 暂无 — 双重点击根因已确认，等决定修复方案
+**Next step**: 为侧栏按钮恢复气泡提示（用不创建子窗口的方式）
