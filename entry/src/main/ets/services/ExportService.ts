@@ -52,7 +52,7 @@ export class ExportService {
   exportPdf(webCtrl: webview.WebviewController): void {
     try {
       const adapter = webCtrl.createWebPrintDocumentAdapter('markdown_export.pdf');
-      print.print('markdown_export', adapter);
+      print.print(['markdown_export'], adapter);
     } catch (err) {
       console.error('exportPdf failed: ' + String(err));
     }
@@ -62,7 +62,7 @@ export class ExportService {
   printPage(webCtrl: webview.WebviewController): void {
     try {
       const adapter = webCtrl.createWebPrintDocumentAdapter('markdown_print.pdf');
-      print.print('markdown_print', adapter);
+      print.print(['markdown_print'], adapter);
     } catch (err) {
       console.error('printPage failed: ' + String(err));
     }
@@ -70,7 +70,7 @@ export class ExportService {
 
   /** 写入文件 */
   private writeFile(uri: string, content: string): void {
-    const fd: number = fileIo.openSync(uri, fileIo.OpenMode.CREATE | fileIo.OpenMode.WRITE_ONLY | fileIo.OpenMode.TRUNC);
+    const fd = fileIo.openSync(uri, fileIo.OpenMode.CREATE | fileIo.OpenMode.WRITE_ONLY | fileIo.OpenMode.TRUNC);
     fileIo.writeSync(fd, content);
     fileIo.closeSync(fd);
   }

@@ -14,6 +14,7 @@
  */
 
 import { router } from '@kit.ArkUI';
+import { webview } from '@kit.ArkWeb';
 
 import { MarkdownEditor } from '../components/MarkdownEditor';
 import { MarkdownPreview } from '../components/MarkdownPreview';
@@ -25,6 +26,10 @@ import { ThemeService, ThemeColors } from '../services/ThemeService';
 import { FileService } from '../services/FileService';
 import { ExportService } from '../services/ExportService';
 import { ExportSheet, ExportFormat } from '../components/ExportSheet';
+
+import { MarkdownParser } from '../core/MarkdownParser';
+import { HtmlRenderer } from '../core/HtmlRenderer';
+import { DocumentNode } from '../core/MarkdownAST';
 
 // ── 视图模型 ──
 
@@ -206,49 +211,55 @@ struct EditorPage {
   }
 
   build() {
-    Column() {
-      // 工具栏
-      Toolbar({
-        themeColors: this.themeBridge,
-        viewMode: this.viewMode,
-        onCommand: (cmd: string) => this.handleCommand(cmd),
-        onExport: () => this.handleExport(),
-      })
-
-      // 主内容区
-      Row() {
-        // 侧面板
-        SidePanel({
+    Stack() {
+      Column() {
+        // 工具栏
+        Toolbar({
           themeColors: this.themeBridge,
-          onFileSelect: (path: string) => this.openFile(path),
-          onHeadingSelect: (id: string) => this.scrollToHeading(id),
+          viewMode: this.viewMode,
+          onCommand: (cmd: string) => this.handleCommand(cmd),
+          onExport: () => this.handleExport(),
         })
 
-        // 编辑/预览区域
-        if (this.viewMode === ViewMode.Edit) {
-          this.buildEditorOnly()
-        } else if (this.viewMode === ViewMode.Preview) {
-          this.buildPreviewOnly()
-        } else {
-          this.buildSplitView()
-        }
-      }
-      .layoutWeight(1)
+        // 主内容区
+        Row() {
+          // 侧面板
+          SidePanel({
+            themeColors: this.themeBridge,
+            onFileSelect: (path: string) => this.openFile(path),
+            onHeadingSelect: (id: string) => this.scrollToHeading(id),
+          })
 
-      // 状态栏
-      StatusBar({
-        themeColors: this.themeBridge,
-      })
+          // 编辑/预览区域
+          if (this.viewMode === ViewMode.Edit) {
+            this.buildEditorOnly()
+          } else if (this.viewMode === ViewMode.Preview) {
+            this.buildPreviewOnly()
+          } else {
+            this.buildSplitView()
+          }
+        }
+        .layoutWeight(1)
+
+        // 状态栏
+        StatusBar({
+          themeColors: this.themeBridge,
+        })
+      }
+      .width('100%')
+      .height('100%')
+      .backgroundColor(this.themeBridge.editorBg)
+
+      // 导出弹窗
+      if (this.showExportSheet) {
+        ExportSheet({ visible: this.showExportSheet, themeColors: this.themeBridge,
+          onSelect: (fmt: ExportFormat) => this.doExport(fmt),
+          onClose: () => { this.showExportSheet = false; }
+        })
+      }
     }
     .width('100%')
     .height('100%')
-    .backgroundColor(this.themeBridge.editorBg)
-
-    // 导出弹窗
-    ExportSheet({ visible: this.showExportSheet, themeColors: this.themeBridge,
-      onSelect: (fmt: ExportFormat) => this.doExport(fmt),
-      onClose: () => { this.showExportSheet = false; }
-    })
   }
 
   @Builder
@@ -492,10 +503,10 @@ $$
         await this.exportService?.saveMD(this.vm.content);
       } else if (format === ExportFormat.HTML) {
         // 生成 HTML
-        const parser = new MarkdownParser(this.vm.content);
-        const ast = parser.parse();
-        const renderer = new HtmlRenderer({ darkMode: false, fontSize: 14 });
-        const html = renderer.renderFullPage(ast);
+        const parser: MarkdownParser = new MarkdownParser(this.vm.content);
+        const ast: DocumentNode = parser.parse();
+        const renderer: HtmlRenderer = new HtmlRenderer({ darkMode: false, fontSize: 14 });
+        const html: string = renderer.renderFullPage(ast);
         await this.exportService?.saveHTML(html);
       } else if (format === ExportFormat.PDF) {
         if (this.previewController) this.exportService?.exportPdf(this.previewController);
