@@ -4,7 +4,7 @@ import { ThemeColors } from '../services/ThemeService';
  * SidePanel 组件
  *
  * 侧面板，提供：文件浏览 / 文档大纲 / 最近文件
- * Tooltip 用 Stack + 内联 Text，不用 bindPopup（子窗口热区拦截点击）
+ * 使用 bindPopup 显示 tooltip，与 Toolbar 一致
  */
 @Component
 export struct SidePanel {
@@ -16,11 +16,17 @@ export struct SidePanel {
   @State private recentFiles: RecentFileItem[] = [];
   @State private expanded: boolean = true;
 
-  // Hover tooltips — inline Text, no bindPopup/subwindow
-  @State private hTabFiles: boolean = false;
-  @State private hTabOutline: boolean = false;
-  @State private hTabRecent: boolean = false;
+  // bindPopup hover states
+  @State private hFiles: boolean = false;
+  @State private hOutline: boolean = false;
+  @State private hRecent: boolean = false;
   @State private hToggle: boolean = false;
+
+  // timers: positive = pending show
+  private tFiles: number = 0;
+  private tOutline: number = 0;
+  private tRecent: number = 0;
+  private tToggle: number = 0;
 
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
@@ -30,115 +36,87 @@ export struct SidePanel {
   }
 
   build() {
-    Stack({ alignContent: Alignment.Start }) {
-      Row() {
-        Column() {
-          // 图标按钮栏
-          // 📁 文件浏览
-          Button({ type: ButtonType.Normal }) {
-            Text('📁').fontSize(16).opacity(this.activeTab === PanelTab.Files ? 1.0 : 0.6)
-          }
-          .width(28).height(28).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 4 })
-          .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
-          .onClick(() => { this.activeTab = PanelTab.Files; })
-
-          // 📑 文档大纲
-          Button({ type: ButtonType.Normal }) {
-            Text('📑').fontSize(16).opacity(this.activeTab === PanelTab.Outline ? 1.0 : 0.6)
-          }
-          .width(28).height(28).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 4 })
-          .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
-          .onClick(() => { this.activeTab = PanelTab.Outline; })
-
-          // 🕐 最近文件
-          Button({ type: ButtonType.Normal }) {
-            Text('🕐').fontSize(16).opacity(this.activeTab === PanelTab.Recent ? 1.0 : 0.6)
-          }
-          .width(28).height(28).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 4 })
-          .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
-          .onClick(() => { this.activeTab = PanelTab.Recent; })
-
-          Blank()
-
-          // 展开/收起
-          if (this.expanded) {
-            Button({ type: ButtonType.Normal }) {
-              Text('◀').fontSize(12).fontColor(this.themeColors.sidebarFg)
-            }
-            .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-            .onHover((isHover: boolean) => { this.hToggle = isHover; })
-            .onClick(() => { this.expanded = false; })
-          } else {
-            Button({ type: ButtonType.Normal }) {
-              Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
-            }
-            .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-            .onHover((isHover: boolean) => { this.hToggle = isHover; })
-            .onClick(() => { this.expanded = true; })
-          }
+    Row() {
+      Column() {
+        // 📁 文件浏览
+        Button({ type: ButtonType.Normal }) {
+          Text('📁').fontSize(16).opacity(this.activeTab === PanelTab.Files ? 1.0 : 0.6)
         }
-        .width(32).height('100%')
-        .backgroundColor(this.themeColors.sidebarBg).padding({ top: 4 })
+        .width(28).height(28).padding(0)
+        .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 4 })
+        .bindPopup(this.hFiles, { message: '文件浏览', placement: Placement.Top, showInSubWindow: true })
+        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('files'); else this.hoverLeave('files'); })
+        .onClick(() => { this.activeTab = PanelTab.Files; })
 
-        // 内容区域
+        // 📑 文档大纲
+        Button({ type: ButtonType.Normal }) {
+          Text('📑').fontSize(16).opacity(this.activeTab === PanelTab.Outline ? 1.0 : 0.6)
+        }
+        .width(28).height(28).padding(0)
+        .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 4 })
+        .bindPopup(this.hOutline, { message: '文档大纲', placement: Placement.Top, showInSubWindow: true })
+        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('outline'); else this.hoverLeave('outline'); })
+        .onClick(() => { this.activeTab = PanelTab.Outline; })
+
+        // 🕐 最近文件
+        Button({ type: ButtonType.Normal }) {
+          Text('🕐').fontSize(16).opacity(this.activeTab === PanelTab.Recent ? 1.0 : 0.6)
+        }
+        .width(28).height(28).padding(0)
+        .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 4 })
+        .bindPopup(this.hRecent, { message: '最近文件', placement: Placement.Top, showInSubWindow: true })
+        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('recent'); else this.hoverLeave('recent'); })
+        .onClick(() => { this.activeTab = PanelTab.Recent; })
+
+        Blank()
+
+        // 展开/收起
         if (this.expanded) {
-          Column() {
-            Text(this.getTabTitle())
-              .fontSize(13).fontWeight(600)
-              .fontColor(this.themeColors.sidebarFg)
-              .height(36).padding({ left: 12, top: 8 })
-
-            if (this.activeTab === PanelTab.Files) {
-              this.buildFileList()
-            } else if (this.activeTab === PanelTab.Outline) {
-              this.buildOutline()
-            } else {
-              this.buildRecentList()
-            }
+          Button({ type: ButtonType.Normal }) {
+            Text('◀').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
-          .layoutWeight(1).height('100%')
-          .backgroundColor(this.themeColors.sidebarBg)
+          .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
+          .bindPopup(this.hToggle, { message: '收起侧栏', placement: Placement.Top, showInSubWindow: true })
+          .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('toggle'); else this.hoverLeave('toggle'); })
+          .onClick(() => { this.expanded = false; })
+        } else {
+          Button({ type: ButtonType.Normal }) {
+            Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
+          }
+          .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
+          .bindPopup(this.hToggle, { message: '展开侧栏', placement: Placement.Top, showInSubWindow: true })
+          .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('toggle'); else this.hoverLeave('toggle'); })
+          .onClick(() => { this.expanded = true; })
         }
       }
-      .width(this.expanded ? 220 : 32).height('100%')
-      .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
+      .width(32).height('100%')
+      .backgroundColor(this.themeColors.sidebarBg).padding({ top: 4 })
 
-      // ── 内联 tooltip（浮在 Row 上层，不受 32px 裁剪） ──
-      if (this.hTabFiles) {
-        Text('文件浏览')
-          .fontSize(11).fontColor('#fff')
-          .backgroundColor('#333333').borderRadius(4)
-          .padding({ left: 6, right: 6, top: 3, bottom: 3 })
-          .position({ x: 36, y: 8 })
-      }
-      if (this.hTabOutline) {
-        Text('文档大纲')
-          .fontSize(11).fontColor('#fff')
-          .backgroundColor('#333333').borderRadius(4)
-          .padding({ left: 6, right: 6, top: 3, bottom: 3 })
-          .position({ x: 36, y: 40 })
-      }
-      if (this.hTabRecent) {
-        Text('最近文件')
-          .fontSize(11).fontColor('#fff')
-          .backgroundColor('#333333').borderRadius(4)
-          .padding({ left: 6, right: 6, top: 3, bottom: 3 })
-          .position({ x: 36, y: 72 })
-      }
-      if (this.hToggle) {
-        Text(this.expanded ? '收起侧栏' : '展开侧栏')
-          .fontSize(11).fontColor('#fff')
-          .backgroundColor('#333333').borderRadius(4)
-          .padding({ left: 6, right: 6, top: 3, bottom: 3 })
-          .position({ x: 36, y: this.expanded ? 400 : 140 })
+      // 内容区域
+      if (this.expanded) {
+        Column() {
+          Text(this.getTabTitle())
+            .fontSize(13).fontWeight(600)
+            .fontColor(this.themeColors.sidebarFg)
+            .height(36).padding({ left: 12, top: 8 })
+
+          if (this.activeTab === PanelTab.Files) {
+            this.buildFileList()
+          } else if (this.activeTab === PanelTab.Outline) {
+            this.buildOutline()
+          } else {
+            this.buildRecentList()
+          }
+        }
+        .layoutWeight(1).height('100%')
+        .backgroundColor(this.themeColors.sidebarBg)
       }
     }
+    .width(this.expanded ? 220 : 32).height('100%')
+    .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
   }
 
   @Builder buildFileList() {
@@ -208,6 +186,44 @@ export struct SidePanel {
   }
 
   private loadSampleOutline(): void {}
+
+  // ── Hover / bindPopup 方法（与 Toolbar 一致） ──
+
+  private clrAll(k: string): void {
+    let t: number = 0;
+    if (k === 'files') t = this.tFiles;
+    else if (k === 'outline') t = this.tOutline;
+    else if (k === 'recent') t = this.tRecent;
+    else if (k === 'toggle') t = this.tToggle;
+    if (t !== 0) { clearTimeout(t); }
+    this.setT(k, 0);
+  }
+
+  private setT(k: string, v: number): void {
+    if (k === 'files') this.tFiles = v;
+    else if (k === 'outline') this.tOutline = v;
+    else if (k === 'recent') this.tRecent = v;
+    else if (k === 'toggle') this.tToggle = v;
+  }
+
+  private setPop(k: string, v: boolean): void {
+    if (k === 'files') this.hFiles = v;
+    else if (k === 'outline') this.hOutline = v;
+    else if (k === 'recent') this.hRecent = v;
+    else if (k === 'toggle') this.hToggle = v;
+  }
+
+  private hoverEnter(k: string): void {
+    this.clrAll(k);
+    // 延迟 500ms 后才显示气泡，防止快速划过闪烁
+    const id: number = setTimeout(() => { this.setPop(k, true); }, 500);
+    this.setT(k, id);
+  }
+
+  private hoverLeave(k: string): void {
+    this.clrAll(k);
+    this.setPop(k, false);
+  }
 }
 
 export enum PanelTab { Files = 'files', Outline = 'outline', Recent = 'recent' }
