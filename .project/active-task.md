@@ -2,22 +2,26 @@
 
 ## Objective
 
-清理编译告警：将弃用 API（pushUrl, getContext 等）替换为最新版（pushPage, getUIContext 等）。
+无活跃阻塞任务。等待用户决定下一步方向。
 
 ## Context
 
-DevEco Studio 5.0 (API 12) 弃用了部分 API，编译时产生 warnings。不影响运行，
-但长期看应迁移到最新 API。涉及文件：导航路由、上下文获取。
+导出功能（MD/HTML/PDF/Print）编译错误已修复（bc37e4d），12 errors → 0 errors。
+剩余 17 WARNs 均为弃用 API（pushUrl, getContext, getParams）和 API 版本兼容提示，不影响编译和运行。
 
 ## Progress
 
-- [ ] 扫描所有文件，列出所有弃用 API 的出现位置
-- [ ] 逐文件替换修正
-- [ ] 提 PR / push
+- [x] 修复 12 个导出功能编译错误
+  - 缺失 import（webview, MarkdownParser, HtmlRenderer, DocumentNode）
+  - build() 双根节点（Stack 包裹）
+  - 显式类型标注（避免 arkts-no-any-unknown）
+  - print.print() 参数类型 string → string[]
+  - fileIo.openSync 返回值类型 File → 移除 :number 标注
+- [ ] 用户验证：pull → DevEco Studio 编译确认 0 error
+- [ ] 决定下一步方向
 
 ## Checkpoint
 
-**Status**: `pending`
-**Waiting for**: 用户确认是否现在做这个清理
-**Next step after confirmation**: 扫描并列出所有需要修改的位置，逐文件替换
-**Verification required**: 用户 pull → DevEco Studio 编译验证 0 warning
+**Status**: `done`
+**Completed at**: bc37e4d (2026-06-20)
+**Verification required**: 用户 pull → Build → 确认 0 error

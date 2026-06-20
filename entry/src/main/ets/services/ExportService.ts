@@ -52,7 +52,15 @@ export class ExportService {
   exportPdf(webCtrl: webview.WebviewController): void {
     try {
       const adapter = webCtrl.createWebPrintDocumentAdapter('markdown_export.pdf');
-      print.print(['markdown_export'], adapter);
+      const attrs: print.PrintAttributes = {
+        copyNumber: 1,
+        pageRange: { startPage: 0, endPage: 0, pages: [] },
+        pageSize: print.PrintPageType.PAGE_ISO_A4,
+        directionMode: print.PrintDirectionMode.DIRECTION_MODE_AUTO,
+        colorMode: print.PrintColorMode.COLOR_MODE_COLOR,
+        duplexMode: print.PrintDuplexMode.DUPLEX_MODE_NONE,
+      };
+      print.print('markdown_export', adapter, attrs, this.context);
     } catch (err) {
       console.error('exportPdf failed: ' + String(err));
     }
@@ -62,7 +70,15 @@ export class ExportService {
   printPage(webCtrl: webview.WebviewController): void {
     try {
       const adapter = webCtrl.createWebPrintDocumentAdapter('markdown_print.pdf');
-      print.print(['markdown_print'], adapter);
+      const attrs: print.PrintAttributes = {
+        copyNumber: 1,
+        pageRange: { startPage: 0, endPage: 0, pages: [] },
+        pageSize: print.PrintPageType.PAGE_ISO_A4,
+        directionMode: print.PrintDirectionMode.DIRECTION_MODE_AUTO,
+        colorMode: print.PrintColorMode.COLOR_MODE_COLOR,
+        duplexMode: print.PrintDuplexMode.DUPLEX_MODE_NONE,
+      };
+      print.print('markdown_print', adapter, attrs, this.context);
     } catch (err) {
       console.error('printPage failed: ' + String(err));
     }
@@ -70,8 +86,8 @@ export class ExportService {
 
   /** 写入文件 */
   private writeFile(uri: string, content: string): void {
-    const fd = fileIo.openSync(uri, fileIo.OpenMode.CREATE | fileIo.OpenMode.WRITE_ONLY | fileIo.OpenMode.TRUNC);
-    fileIo.writeSync(fd, content);
-    fileIo.closeSync(fd);
+    const file = fileIo.openSync(uri, fileIo.OpenMode.CREATE | fileIo.OpenMode.WRITE_ONLY | fileIo.OpenMode.TRUNC);
+    fileIo.writeSync(file.fd, content);
+    fileIo.closeSync(file);
   }
 }
