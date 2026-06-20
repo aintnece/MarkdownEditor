@@ -25,6 +25,7 @@ export struct SidePanel {
   @State private hTabOutline: boolean = false;
   @State private hTabRecent: boolean = false;
   @State private hCollapse: boolean = false;
+  @State private hExpand: boolean = false;
 
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
@@ -65,6 +66,16 @@ export struct SidePanel {
         .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
 
         Blank()
+
+        // ▶ 展开侧栏
+        Button({ type: ButtonType.Normal }) {
+          Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
+        }
+        .width(28).height(28)
+        .backgroundColor(Color.Transparent).borderRadius(4)
+        .bindPopup(this.hExpand, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: true })
+        .onHover((isHover: boolean) => { this.hExpand = isHover; })
+        .onClick(() => { this.expanded = true; })
       }
       .width(32)
       .height('100%')
