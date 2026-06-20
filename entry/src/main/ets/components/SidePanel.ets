@@ -4,7 +4,7 @@ import { ThemeColors } from '../services/ThemeService';
  * SidePanel 组件
  *
  * 侧面板，提供：文件浏览 / 文档大纲 / 最近文件
- * 提示使用底部文字栏（避免 bindPopup 子窗口拦截点击）
+ * 气泡用 showInSubWindow:false（不创建系统子窗口，不拦截点击）
  */
 
 @Component
@@ -17,9 +17,10 @@ export struct SidePanel {
   @State private recentFiles: RecentFileItem[] = [];
   @State private expanded: boolean = true;
 
-  // 底部提示
-  @State private tipText: string = '';
-  @State private showTip: boolean = false;
+  @State private hTabFiles: boolean = false;
+  @State private hTabOutline: boolean = false;
+  @State private hTabRecent: boolean = false;
+  @State private hToggle: boolean = false;
 
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
@@ -38,7 +39,8 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .onHover((isHover: boolean) => { this.setTip(isHover, '文件浏览'); })
+        .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: false })
+        .onHover((isHover: boolean) => { this.hTabFiles = isHover; })
         .onClick(() => { this.activeTab = PanelTab.Files; })
 
         // 📑 文档大纲
@@ -48,7 +50,8 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .onHover((isHover: boolean) => { this.setTip(isHover, '文档大纲'); })
+        .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: false })
+        .onHover((isHover: boolean) => { this.hTabOutline = isHover; })
         .onClick(() => { this.activeTab = PanelTab.Outline; })
 
         // 🕐 最近文件
@@ -58,18 +61,11 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .onHover((isHover: boolean) => { this.setTip(isHover, '最近文件'); })
+        .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: false })
+        .onHover((isHover: boolean) => { this.hTabRecent = isHover; })
         .onClick(() => { this.activeTab = PanelTab.Recent; })
 
         Blank()
-
-        // 底部提示文字（替代 bindPopup，不创建子窗口）
-        if (this.showTip) {
-          Text(this.tipText)
-            .fontSize(10).fontColor(this.themeColors.sidebarFg)
-            .maxLines(2).textAlign(TextAlign.Center)
-            .padding({ top: 4, bottom: 4 }).margin({ bottom: 2 })
-        }
 
         // 展开/收起
         if (this.expanded) {
@@ -77,14 +73,16 @@ export struct SidePanel {
             Text('◀').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
           .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-          .onHover((isHover: boolean) => { this.setTip(isHover, '收起侧栏'); })
+          .bindPopup(this.hToggle, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: false })
+          .onHover((isHover: boolean) => { this.hToggle = isHover; })
           .onClick(() => { this.expanded = false; })
         } else {
           Button({ type: ButtonType.Normal }) {
             Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
           .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-          .onHover((isHover: boolean) => { this.setTip(isHover, '展开侧栏'); })
+          .bindPopup(this.hToggle, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: false })
+          .onHover((isHover: boolean) => { this.hToggle = isHover; })
           .onClick(() => { this.expanded = true; })
         }
       }
@@ -113,16 +111,6 @@ export struct SidePanel {
     }
     .width(this.expanded ? 220 : 32).height('100%')
     .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
-  }
-
-  private setTip(show: boolean, text: string): void {
-    if (show) {
-      this.tipText = text;
-      this.showTip = true;
-    } else {
-      this.showTip = false;
-      this.tipText = '';
-    }
   }
 
   @Builder buildFileList() {
