@@ -238,8 +238,8 @@ export struct Toolbar {
 
       Divider().vertical(true).height(20).width(1).color(this.themeColors.previewBorder).margin({ left: 4, right: 4 })
 
-      // ✏️
-      Button({ type: ButtonType.Normal }) { Text('✏️').fontSize(14).fontColor(this.viewMode === ViewMode.Edit ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Edit ? 700 : 400) }
+      // ✎ 编辑
+      Button({ type: ButtonType.Normal }) { Text('✎').fontSize(14).fontColor(this.viewMode === ViewMode.Edit ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Edit ? 700 : 400) }
       .width(32).height(32).padding(0).backgroundColor(this.viewMode === ViewMode.Edit ? this.themeColors.toolbarHover : Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('edit'); })
       .bindPopup(this.hEdit, { message: this.tip('edit'), placement: Placement.Top, showInSubWindow: true })
@@ -250,8 +250,8 @@ export struct Toolbar {
       .onClick(() => { if (this.onCommand) this.onCommand('split'); })
       .bindPopup(this.hSplit, { message: this.tip('split'), placement: Placement.Top, showInSubWindow: true })
       .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('split'); else this.hoverLeave('split'); })
-      // 👁
-      Button({ type: ButtonType.Normal }) { Text('👁').fontSize(14).fontColor(this.viewMode === ViewMode.Preview ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Preview ? 700 : 400) }
+      // ◎ 预览 (替代 👁)
+      Button({ type: ButtonType.Normal }) { Text('◎').fontSize(14).fontColor(this.viewMode === ViewMode.Preview ? this.themeColors.toolbarActive : this.themeColors.toolbarFg).fontWeight(this.viewMode === ViewMode.Preview ? 700 : 400) }
       .width(32).height(32).padding(0).backgroundColor(this.viewMode === ViewMode.Preview ? this.themeColors.toolbarHover : Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('preview'); })
       .bindPopup(this.hPreview, { message: this.tip('preview'), placement: Placement.Top, showInSubWindow: true })
@@ -259,14 +259,14 @@ export struct Toolbar {
 
       Blank()
 
-      // ↩
-      Button({ type: ButtonType.Normal }) { Text('↩').fontSize(14).fontColor(this.themeColors.toolbarFg) }
+      // ↶ 撤销
+      Button({ type: ButtonType.Normal }) { Text('↶').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('undo'); })
       .bindPopup(this.hUndo, { message: this.tip('undo'), placement: Placement.Top, showInSubWindow: true })
       .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('undo'); else this.hoverLeave('undo'); })
-      // ↪
-      Button({ type: ButtonType.Normal }) { Text('↪').fontSize(14).fontColor(this.themeColors.toolbarFg) }
+      // ↷ 重做
+      Button({ type: ButtonType.Normal }) { Text('↷').fontSize(14).fontColor(this.themeColors.toolbarFg) }
       .width(32).height(32).padding(0).backgroundColor(Color.Transparent).borderRadius(4).margin({ left: 2, right: 2 })
       .onClick(() => { if (this.onCommand) this.onCommand('redo'); })
       .bindPopup(this.hRedo, { message: this.tip('redo'), placement: Placement.Top, showInSubWindow: true })
