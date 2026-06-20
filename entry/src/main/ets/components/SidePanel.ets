@@ -4,7 +4,7 @@ import { ThemeColors } from '../services/ThemeService';
  * SidePanel 组件
  *
  * 侧面板，提供：文件浏览 / 文档大纲 / 最近文件
- * 气泡提示使用 500ms hover 延迟（避免 popup 子窗口拦截点击）
+ * 提示使用底部文字栏（避免 bindPopup 子窗口拦截点击）
  */
 
 @Component
@@ -17,16 +17,9 @@ export struct SidePanel {
   @State private recentFiles: RecentFileItem[] = [];
   @State private expanded: boolean = true;
 
-  // 气泡延迟状态
-  @State private hTabFiles: boolean = false;
-  @State private hTabOutline: boolean = false;
-  @State private hTabRecent: boolean = false;
-  @State private hToggle: boolean = false;
-
-  private tTabFiles: number = 0;
-  private tTabOutline: number = 0;
-  private tTabRecent: number = 0;
-  private tToggle: number = 0;
+  // 底部提示
+  @State private tipText: string = '';
+  @State private showTip: boolean = false;
 
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
@@ -45,8 +38,7 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabFiles, { message: '文件浏览', placement: Placement.Right, showInSubWindow: true })
-        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('files'); else this.hoverLeave('files'); })
+        .onHover((isHover: boolean) => { this.setTip(isHover, '文件浏览'); })
         .onClick(() => { this.activeTab = PanelTab.Files; })
 
         // 📑 文档大纲
@@ -56,8 +48,7 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabOutline, { message: '文档大纲', placement: Placement.Right, showInSubWindow: true })
-        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('outline'); else this.hoverLeave('outline'); })
+        .onHover((isHover: boolean) => { this.setTip(isHover, '文档大纲'); })
         .onClick(() => { this.activeTab = PanelTab.Outline; })
 
         // 🕐 最近文件
@@ -67,11 +58,18 @@ export struct SidePanel {
         .width(28).height(28).padding(0)
         .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
         .borderRadius(4).margin({ top: 4 })
-        .bindPopup(this.hTabRecent, { message: '最近文件', placement: Placement.Right, showInSubWindow: true })
-        .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('recent'); else this.hoverLeave('recent'); })
+        .onHover((isHover: boolean) => { this.setTip(isHover, '最近文件'); })
         .onClick(() => { this.activeTab = PanelTab.Recent; })
 
         Blank()
+
+        // 底部提示文字（替代 bindPopup，不创建子窗口）
+        if (this.showTip) {
+          Text(this.tipText)
+            .fontSize(10).fontColor(this.themeColors.sidebarFg)
+            .maxLines(2).textAlign(TextAlign.Center)
+            .padding({ top: 4, bottom: 4 }).margin({ bottom: 2 })
+        }
 
         // 展开/收起
         if (this.expanded) {
@@ -79,16 +77,14 @@ export struct SidePanel {
             Text('◀').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
           .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-          .bindPopup(this.hToggle, { message: '收起侧栏', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('toggle'); else this.hoverLeave('toggle'); })
+          .onHover((isHover: boolean) => { this.setTip(isHover, '收起侧栏'); })
           .onClick(() => { this.expanded = false; })
         } else {
           Button({ type: ButtonType.Normal }) {
             Text('▶').fontSize(12).fontColor(this.themeColors.sidebarFg)
           }
           .width(28).height(28).backgroundColor(Color.Transparent).borderRadius(4)
-          .bindPopup(this.hToggle, { message: '展开侧栏', placement: Placement.Right, showInSubWindow: true })
-          .onHover((isHover: boolean) => { if (isHover) this.hoverEnter('toggle'); else this.hoverLeave('toggle'); })
+          .onHover((isHover: boolean) => { this.setTip(isHover, '展开侧栏'); })
           .onClick(() => { this.expanded = true; })
         }
       }
@@ -119,44 +115,15 @@ export struct SidePanel {
     .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
   }
 
-  // ── 气泡延迟逻辑（500ms hover 后才显示） ──
-
-  private hoverEnter(k: string): void {
-    let t: number = 0;
-    if (k === 'files') t = this.tTabFiles;
-    else if (k === 'outline') t = this.tTabOutline;
-    else if (k === 'recent') t = this.tTabRecent;
-    else if (k === 'toggle') t = this.tToggle;
-    if (t !== 0) clearTimeout(t);
-
-    const id: number = setTimeout(() => {
-      if (k === 'files') this.hTabFiles = true;
-      else if (k === 'outline') this.hTabOutline = true;
-      else if (k === 'recent') this.hTabRecent = true;
-      else if (k === 'toggle') this.hToggle = true;
-    }, 500);
-
-    if (k === 'files') this.tTabFiles = id;
-    else if (k === 'outline') this.tTabOutline = id;
-    else if (k === 'recent') this.tTabRecent = id;
-    else if (k === 'toggle') this.tToggle = id;
+  private setTip(show: boolean, text: string): void {
+    if (show) {
+      this.tipText = text;
+      this.showTip = true;
+    } else {
+      this.showTip = false;
+      this.tipText = '';
+    }
   }
-
-  private hoverLeave(k: string): void {
-    let t: number = 0;
-    if (k === 'files') t = this.tTabFiles;
-    else if (k === 'outline') t = this.tTabOutline;
-    else if (k === 'recent') t = this.tTabRecent;
-    else if (k === 'toggle') t = this.tToggle;
-    if (t !== 0) { clearTimeout(t); }
-
-    if (k === 'files') { this.tTabFiles = 0; this.hTabFiles = false; }
-    else if (k === 'outline') { this.tTabOutline = 0; this.hTabOutline = false; }
-    else if (k === 'recent') { this.tTabRecent = 0; this.hTabRecent = false; }
-    else if (k === 'toggle') { this.tToggle = 0; this.hToggle = false; }
-  }
-
-  // ── 内容区 ──
 
   @Builder buildFileList() {
     Scroll() {
