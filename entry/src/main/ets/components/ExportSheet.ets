@@ -2,25 +2,21 @@
  * 导出选择弹窗
  *
  * 提供 MD / HTML / PDF / 打印 四种导出方式
+ * 渲染在全屏 Stack 中作为 overlay
  */
 
 @Component
 export struct ExportSheet {
   @Prop visible: boolean;
-  @Link themeColors: object;
+  @Prop themeColors: object;
   onSelect?: (fmt: ExportFormat) => void;
   onClose?: () => void;
 
   build() {
     if (this.visible) {
       Column() {
-        // 遮罩
-        Column()
-          .width('100%').height('100%')
-          .backgroundColor('rgba(0,0,0,0.3)')
-          .onClick(() => { if (this.onClose) this.onClose(); })
-
-        // 弹窗内容
+        Blank()
+        // 弹窗内容（底部弹出）
         Column({ space: 0 }) {
           Text('导出文档')
             .fontSize(18).fontWeight(600)
@@ -44,7 +40,8 @@ export struct ExportSheet {
         .padding({ bottom: 20 })
       }
       .width('100%').height('100%')
-      .position({ x: 0, y: 0 })
+      .backgroundColor('rgba(0,0,0,0.3)')
+      .onClick(() => { if (this.onClose) this.onClose(); })
     }
   }
 

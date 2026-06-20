@@ -139,7 +139,7 @@ export struct Toolbar {
     if (k === 'preview') return '预览';
     if (k === 'undo') return '撤销';
     if (k === 'redo') return '重做';
-    if (k === 'export') return '导出 HTML';
+    if (k === 'export') return '导出文档';
     return k;
   }
 
