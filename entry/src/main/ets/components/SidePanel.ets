@@ -4,22 +4,17 @@ import { ThemeColors } from '../services/ThemeService';
  * SidePanel 组件
  *
  * 侧面板，提供：文件浏览 / 文档大纲 / 最近文件
- * 使用 Stack + 内联 tooltip（不用 bindPopup，避免子窗口拦截点击）
+ * 展开/收起由父组件 EditorPage 控制（@Prop expanded）
  */
 @Component
 export struct SidePanel {
   @Prop themeColors: ThemeColors;
+  @Prop expanded: boolean = true;
 
   @State private activeTab: PanelTab = PanelTab.Files;
   @State private fileList: FileItem[] = [];
   @State private outlineItems: OutlineItem[] = [];
   @State private recentFiles: RecentFileItem[] = [];
-  @State private expanded: boolean = true;
-
-  // Stack tooltip state
-  @State private hoveredBtn: string = '';
-  // timer: positive = pending show
-  private tooltipTimer: number = 0;
 
   onFileSelect?: (path: string) => void;
   onHeadingSelect?: (headingId: string) => void;
@@ -29,105 +24,65 @@ export struct SidePanel {
   }
 
   build() {
-    Stack({ alignContent: Alignment.Start }) {
-      Row() {
-        Column() {
-          // 📁 文件浏览
-          Button({ type: ButtonType.Normal }) {
-            Text('📁').fontSize(18).opacity(this.activeTab === PanelTab.Files ? 1.0 : 0.6)
-          }
-          .width(36).height(36).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 10 })
-          .onHover((isHover: boolean) => {
-            if (isHover) this.showTooltip('files'); else this.clearTooltip();
-          })
-          .onClick(() => { this.activeTab = PanelTab.Files; })
-
-          // 📑 文档大纲
-          Button({ type: ButtonType.Normal }) {
-            Text('📑').fontSize(18).opacity(this.activeTab === PanelTab.Outline ? 1.0 : 0.6)
-          }
-          .width(36).height(36).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 10 })
-          .onHover((isHover: boolean) => {
-            if (isHover) this.showTooltip('outline'); else this.clearTooltip();
-          })
-          .onClick(() => { this.activeTab = PanelTab.Outline; })
-
-          // 🕐 最近文件
-          Button({ type: ButtonType.Normal }) {
-            Text('🕐').fontSize(18).opacity(this.activeTab === PanelTab.Recent ? 1.0 : 0.6)
-          }
-          .width(36).height(36).padding(0)
-          .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
-          .borderRadius(4).margin({ top: 10 })
-          .onHover((isHover: boolean) => {
-            if (isHover) this.showTooltip('recent'); else this.clearTooltip();
-          })
-          .onClick(() => { this.activeTab = PanelTab.Recent; })
-
-          Blank()
-
-          // 展开/收起
-          if (this.expanded) {
-            Button({ type: ButtonType.Normal }) {
-              Text('◀').fontSize(14).fontColor(this.themeColors.sidebarFg)
-            }
-            .width(36).height(36).backgroundColor(Color.Transparent).borderRadius(4)
-            .onHover((isHover: boolean) => {
-              if (isHover) this.showTooltip('toggle'); else this.clearTooltip();
-            })
-            .onClick(() => { this.expanded = false; })
-          } else {
-            Button({ type: ButtonType.Normal }) {
-              Text('▶').fontSize(14).fontColor(this.themeColors.sidebarFg)
-            }
-            .width(36).height(36).backgroundColor(Color.Transparent).borderRadius(4)
-            .onHover((isHover: boolean) => {
-              if (isHover) this.showTooltip('toggle'); else this.clearTooltip();
-            })
-            .onClick(() => { this.expanded = true; })
-          }
+    Row() {
+      Column() {
+        // 📁 文件浏览
+        Button({ type: ButtonType.Normal }) {
+          Text('📁').fontSize(18).opacity(this.activeTab === PanelTab.Files ? 1.0 : 0.6)
         }
-        .width(44).height('100%')
-        .backgroundColor(this.themeColors.sidebarBg).padding({ top: 6 })
+        .width(36).height(36).padding(0)
+        .backgroundColor(this.activeTab === PanelTab.Files ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 10 })
 
-        // 内容区域
-        if (this.expanded) {
-          Column() {
-            Text(this.getTabTitle())
-              .fontSize(13).fontWeight(600)
-              .fontColor(this.themeColors.sidebarFg)
-              .height(36).padding({ left: 12, top: 8 })
+        .onClick(() => { this.activeTab = PanelTab.Files; })
 
-            if (this.activeTab === PanelTab.Files) {
-              this.buildFileList()
-            } else if (this.activeTab === PanelTab.Outline) {
-              this.buildOutline()
-            } else {
-              this.buildRecentList()
-            }
-          }
-          .layoutWeight(1).height('100%')
-          .backgroundColor(this.themeColors.sidebarBg)
+        // 📑 文档大纲
+        Button({ type: ButtonType.Normal }) {
+          Text('📑').fontSize(18).opacity(this.activeTab === PanelTab.Outline ? 1.0 : 0.6)
         }
+        .width(36).height(36).padding(0)
+        .backgroundColor(this.activeTab === PanelTab.Outline ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 10 })
+
+        .onClick(() => { this.activeTab = PanelTab.Outline; })
+
+        // 🕐 最近文件
+        Button({ type: ButtonType.Normal }) {
+          Text('🕐').fontSize(18).opacity(this.activeTab === PanelTab.Recent ? 1.0 : 0.6)
+        }
+        .width(36).height(36).padding(0)
+        .backgroundColor(this.activeTab === PanelTab.Recent ? this.themeColors.sidebarActive : Color.Transparent)
+        .borderRadius(4).margin({ top: 10 })
+
+        .onClick(() => { this.activeTab = PanelTab.Recent; })
+
+        Blank()
       }
-      .width(this.expanded ? 220 : 44).height('100%')
-      .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
+      .width(44).height('100%')
+      .backgroundColor(this.themeColors.sidebarBg).padding({ top: 6 })
 
-      // ── Stack tooltip layer ──
-      if (this.hoveredBtn !== '') {
-        Text(this.tipText(this.hoveredBtn))
-          .fontSize(12)
-          .fontColor('#ffffff')
-          .backgroundColor(this.themeColors.toolbarFg)
-          .borderRadius(4)
-          .padding({ left: 8, right: 8, top: 5, bottom: 5 })
-          .offset({ x: 48, y: this.btnY(this.hoveredBtn) })
+      // 内容区域
+      if (this.expanded) {
+        Column() {
+          Text(this.getTabTitle())
+            .fontSize(13).fontWeight(600)
+            .fontColor(this.themeColors.sidebarFg)
+            .height(36).padding({ left: 12, top: 8 })
+
+          if (this.activeTab === PanelTab.Files) {
+            this.buildFileList()
+          } else if (this.activeTab === PanelTab.Outline) {
+            this.buildOutline()
+          } else {
+            this.buildRecentList()
+          }
+        }
+        .layoutWeight(1).height('100%')
+        .backgroundColor(this.themeColors.sidebarBg)
       }
     }
+    .width(this.expanded ? 220 : 44).height('100%')
+    .border({ width: { right: 1 }, color: this.themeColors.previewBorder })
   }
 
   @Builder buildFileList() {
@@ -197,35 +152,6 @@ export struct SidePanel {
   }
 
   private loadSampleOutline(): void {}
-
-  // ── Tooltip ──
-
-  private showTooltip(k: string): void {
-    if (this.tooltipTimer !== 0) clearTimeout(this.tooltipTimer);
-    this.tooltipTimer = setTimeout(() => { this.hoveredBtn = k; }, 500);
-  }
-
-  private clearTooltip(): void {
-    if (this.tooltipTimer !== 0) clearTimeout(this.tooltipTimer);
-    this.tooltipTimer = 0;
-    this.hoveredBtn = '';
-  }
-
-  private tipText(k: string): string {
-    if (k === 'files') return '文件浏览';
-    if (k === 'outline') return '文档大纲';
-    if (k === 'recent') return '最近文件';
-    if (k === 'toggle') return this.expanded ? '收起侧栏' : '展开侧栏';
-    return '';
-  }
-
-  private btnY(k: string): number {
-    if (k === 'files') return 10;
-    if (k === 'outline') return 56;
-    if (k === 'recent') return 102;
-    if (k === 'toggle') return this.expanded ? 420 : 148;
-    return 0;
-  }
 }
 
 export enum PanelTab { Files = 'files', Outline = 'outline', Recent = 'recent' }

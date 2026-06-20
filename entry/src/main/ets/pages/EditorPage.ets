@@ -186,6 +186,8 @@ struct EditorPage {
   @State private containerWidth: number = 800;
   @State private lastPanX: number = 0;
   @State private dividerHover: boolean = false;
+  @State private sidebarExpanded: boolean = true;
+  @State private sidebarToggleHover: boolean = false;
 
   private fileService: FileService | null = null;
   private exportService: ExportService | null = null;
@@ -226,9 +228,22 @@ struct EditorPage {
           // 侧面板
           SidePanel({
             themeColors: this.themeBridge,
+            expanded: this.sidebarExpanded,
             onFileSelect: (path: string) => this.openFile(path),
             onHeadingSelect: (id: string) => this.scrollToHeading(id),
           })
+
+          // 侧栏折叠条（VS Code 风格）
+          Column() {
+            Text(this.sidebarExpanded ? '◀' : '▶')
+              .fontSize(10)
+              .fontColor(this.sidebarToggleHover ? '#0366d6' : this.themeBridge.previewBorder)
+          }
+          .width(8).height('100%')
+          .justifyContent(FlexAlign.Center)
+          .backgroundColor(this.sidebarToggleHover ? this.themeBridge.toolbarHover : Color.Transparent)
+          .onHover((isHover: boolean) => { this.sidebarToggleHover = isHover; })
+          .onClick(() => { this.sidebarExpanded = !this.sidebarExpanded; })
 
           // 编辑/预览区域
           if (this.viewMode === ViewMode.Edit) {
